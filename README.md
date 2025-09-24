@@ -1,3 +1,5 @@
+# hackathon-myprofit-2025
+# Региональный этап хакатона «Моя профессия – ИТ» 2025
 # CoffeeBook - Flutter App с Supabase
 
 Приложение книжного магазина с кофейней, разработанное на Flutter с использованием Supabase в качестве backend.
