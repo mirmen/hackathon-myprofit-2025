@@ -42,7 +42,7 @@ SUPABASE_ANON_KEY=your_supabase_anon_key_here
 Выполните следующие SQL-запросы в SQL Editor вашего Supabase проекта:
 
 ```sql
--- Создание таблиц
+-- Таблица профилей
 CREATE TABLE profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
@@ -60,7 +60,11 @@ CREATE FUNCTION handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO public.profiles (id, name, email)
-  VALUES (NEW.id, NEW.raw_user_meta_data->>'name' OR NEW.email, NEW.email);
+  VALUES (
+    NEW.id, 
+    COALESCE(NEW.raw_user_meta_data->>'name', NEW.email), 
+    NEW.email
+  );
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -150,71 +154,6 @@ CREATE TABLE subscription_plans (
   is_popular BOOLEAN DEFAULT FALSE,
   description TEXT
 );
-```
-
-### 5. Добавление тестовых данных
-
-```sql
--- Тестовые продукты
-INSERT INTO products (id, title, author, type, price, rating, image_url, description, options, is_book)
-VALUES
-  ('1', 'Искусство заваривания кофе', 'Джеймс Хоффман', 'Книга', 890.0, 4.8, 'https://images.pexels.com/photos/1907785/pexels-photo-1907785.jpeg', 'Захватывающая книга о мире кофе', '{"Твёрдый переплёт", "Мягкий переплёт", "Электронная"}', true),
-  ('2', 'Эфиопия Иргачиф', 'Свежая обжарка', 'Кофе', 650.0, 4.7, 'https://images.pexels.com/photos/1031750/pexels-photo-1031750.jpeg', 'Идеальный напиток для утреннего чтения', '{"Маленький (100г)", "Стандарт (250г)", "Большой (500г)"}', false),
-  ('3', 'Круассан с миндалем', 'Домашняя выпечка', 'Десерт', 190.0, 4.9, 'https://images.pexels.com/photos/1653877/pexels-photo-1653877.jpeg', 'Свежая выпечка к вашему любимому кофе', '{"1 шт", "2 шт", "6 шт"}', false);
-
--- Тестовые акции
-INSERT INTO promotions (title, subtitle, description, image_url, category)
-VALUES
-  ('Скидка 25% на всю фантастику', 'До конца октября', 'Только до конца октября! Приходите за новинками и классикой жанра.', 'https://images.pexels.com/photos/1907785/pexels-photo-1907785.jpeg', 'Акции'),
-  ('Вечер с автором', '25 сентября в 19:00', 'Презентация новой книги и автограф-сессия.', 'https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg', 'События');
-
--- Тестовые клубы
-INSERT INTO clubs (title, description, image_url, members_count, online_count, type)
-VALUES
-  ('Книжный клуб "Фантастика"', 'Обсуждаем Азимова, Лема и других мэтров жанра', 'https://images.pexels.com/photos/1370298/pexels-photo-1370298.jpeg', 247, 23, 'book'),
-  ('Сообщество бариста', 'Делимся рецептами и техниками приготовления кофе', 'https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg', 189, 15, 'coffee');
-```
-
-### 6. Настройка RLS (Row Level Security)
-
-```sql
--- Включение RLS и создание политик безопасности
-ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
-ALTER TABLE cart_items ENABLE ROW LEVEL SECURITY;
-ALTER TABLE favorites ENABLE ROW LEVEL SECURITY;
-
--- Политики доступа
-CREATE POLICY profile_select ON profiles FOR SELECT TO authenticated
-USING (id = auth.uid());
-
-CREATE POLICY profile_update ON profiles FOR UPDATE TO authenticated
-USING (id = auth.uid());
-
-CREATE POLICY cart_select ON cart_items FOR SELECT TO authenticated
-USING (user_id = auth.uid());
-
-CREATE POLICY cart_insert ON cart_items FOR INSERT TO authenticated
-WITH CHECK (user_id = auth.uid());
-
-CREATE POLICY cart_update ON cart_items FOR UPDATE TO authenticated
-USING (user_id = auth.uid());
-
-CREATE POLICY cart_delete ON cart_items FOR DELETE TO authenticated
-USING (user_id = auth.uid());
-
-CREATE POLICY favorites_select ON favorites FOR SELECT TO authenticated
-USING (user_id = auth.uid());
-
-CREATE POLICY favorites_insert ON favorites FOR INSERT TO authenticated
-WITH CHECK (user_id = auth.uid());
-
-CREATE POLICY favorites_delete ON favorites FOR DELETE TO authenticated
-USING (user_id = auth.uid());
-
--- Публичный доступ к каталогу
-CREATE POLICY products_select ON products FOR SELECT TO anon USING (true);
-CREATE POLICY promotions_select ON promotions FOR SELECT TO anon USING (true);
-CREATE POLICY clubs_select ON clubs FOR SELECT TO anon USING (true);
 ```
 
 ## Запуск приложения
