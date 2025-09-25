@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../utils/app_utils.dart';
 
 class FavoritesProvider extends ChangeNotifier {
   final SupabaseClient _client = Supabase.instance.client;
@@ -10,6 +12,11 @@ class FavoritesProvider extends ChangeNotifier {
   Set<String> get favoriteProductIds => _favoriteProductIds;
 
   Future<void> loadFavorites() async {
+    if (_client.auth.currentUser == null) {
+      _favoriteProductIds = {};
+      return;
+    }
+
     _isLoading = true;
     notifyListeners();
 
@@ -29,7 +36,21 @@ class FavoritesProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> toggleFavorite(String productId) async {
+  Future<bool> toggleFavorite(BuildContext context, String productId) async {
+    // Check authentication first
+    if (!AppUtils.isUserAuthenticated(context)) {
+      final authResult = await AppUtils.requireAuthentication(
+        context,
+        title: 'Добавление в избранное',
+        message: 'Для добавления в избранное необходимо войти в аккаунт',
+      );
+      if (!authResult) {
+        return false;
+      }
+      // Reload favorites after authentication
+      await loadFavorites();
+    }
+
     _isLoading = true;
     notifyListeners();
 
@@ -62,7 +83,21 @@ class FavoritesProvider extends ChangeNotifier {
     return _favoriteProductIds.contains(productId);
   }
 
-  Future<bool> addToFavorites(String productId) async {
+  Future<bool> addToFavorites(BuildContext context, String productId) async {
+    // Check authentication first
+    if (!AppUtils.isUserAuthenticated(context)) {
+      final authResult = await AppUtils.requireAuthentication(
+        context,
+        title: 'Добавление в избранное',
+        message: 'Для добавления в избранное необходимо войти в аккаунт',
+      );
+      if (!authResult) {
+        return false;
+      }
+      // Reload favorites after authentication
+      await loadFavorites();
+    }
+
     _isLoading = true;
     notifyListeners();
 
@@ -84,6 +119,10 @@ class FavoritesProvider extends ChangeNotifier {
   }
 
   Future<bool> removeFromFavorites(String productId) async {
+    if (_client.auth.currentUser == null) {
+      return false;
+    }
+
     _isLoading = true;
     notifyListeners();
 
@@ -105,6 +144,10 @@ class FavoritesProvider extends ChangeNotifier {
   }
 
   Future<bool> clearFavorites() async {
+    if (_client.auth.currentUser == null) {
+      return false;
+    }
+
     _isLoading = true;
     notifyListeners();
 

@@ -28,14 +28,21 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final authProvider = context.read<AuthProvider>();
-      if (authProvider.currentUser == null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => AuthScreen()),
-        );
-      }
+      _checkAuthStatus();
     });
+  }
+
+  void _checkAuthStatus() {
+    final authProvider = context.read<AuthProvider>();
+    if (authProvider.currentUser == null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => AuthScreen()),
+      ).then((value) {
+        // Force a rebuild to update the UI based on auth status
+        setState(() {});
+      });
+    }
   }
 
   void _onItemTapped(int index) {

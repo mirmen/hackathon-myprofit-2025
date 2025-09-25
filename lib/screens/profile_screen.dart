@@ -96,13 +96,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
           }
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: ResponsiveUtils.getResponsivePadding(context, all: 16),
             child: Column(
               children: [
                 // Profile header
                 Card(
                   child: Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: ResponsiveUtils.getResponsivePadding(
+                      context,
+                      all: 20,
+                    ),
                     child: Column(
                       children: [
                         CircleAvatar(
@@ -158,7 +161,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 // Bonus points
                 Card(
                   child: Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: ResponsiveUtils.getResponsivePadding(
+                      context,
+                      all: 20,
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -172,6 +178,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                               ),
+                            ),
+                            Spacer(),
+                            Icon(
+                              Icons.info_outline,
+                              size: 16,
+                              color: Colors.grey,
                             ),
                           ],
                         ),
@@ -203,6 +215,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           valueColor: AlwaysStoppedAnimation<Color>(
                             AppConstants.primaryColor,
                           ),
+                        ),
+                        const SizedBox(height: 12),
+                        // Add book exchange info
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.autorenew,
+                              size: 16,
+                              color: Colors.green,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'Книгообмен активен',
+                              style: GoogleFonts.manrope(
+                                fontSize: 14,
+                                color: Colors.green,
+                              ),
+                            ),
+                            Spacer(),
+                            TextButton(
+                              onPressed: () {
+                                // TODO: Navigate to book exchange screen
+                              },
+                              child: Text('Обменять книги'),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -242,10 +280,61 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 16),
 
+                // Reading stats
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildStreakCard(
+                        'Текущая серия',
+                        '${user.currentStreak}',
+                        'дней',
+                        Colors.orange,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _buildStreakCard(
+                        'Лучшая серия',
+                        '${user.longestStreak}',
+                        'дней',
+                        AppConstants.primaryColor,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _buildStatCard(
+                        'Цитаты',
+                        '${user.quotesCount}',
+                        Icons.format_quote,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+
                 // Settings
                 Card(
                   child: Column(
                     children: [
+                      ListTile(
+                        leading: const Icon(Icons.book),
+                        title: const Text('Мои книги'),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () {
+                          // TODO: Navigate to user's book collection
+                        },
+                      ),
+                      const Divider(height: 1),
+                      ListTile(
+                        leading: const Icon(Icons.camera_alt),
+                        title: const Text('Фото цитат'),
+                        trailing: const Icon(Icons.chevron_right),
+                        onTap: () {
+                          // TODO: Navigate to quote photos screen
+                        },
+                      ),
+                      const Divider(height: 1),
                       ListTile(
                         leading: const Icon(Icons.notifications),
                         title: const Text('Уведомления'),
@@ -288,7 +377,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildStatCard(String title, String value, IconData icon) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: ResponsiveUtils.getResponsivePadding(context, all: 16),
         child: Column(
           children: [
             Icon(icon, size: 32, color: AppConstants.primaryColor),
@@ -305,6 +394,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               title,
               style: GoogleFonts.manrope(fontSize: 12, color: Colors.grey[600]),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStreakCard(
+    String title,
+    String value,
+    String subtitle,
+    Color color,
+  ) {
+    return Card(
+      child: Padding(
+        padding: ResponsiveUtils.getResponsivePadding(context, all: 16),
+        child: Column(
+          children: [
+            Icon(Icons.local_fire_department, size: 32, color: color),
+            const SizedBox(height: 8),
+            Text(
+              value,
+              style: GoogleFonts.manrope(
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                color: color,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              title,
+              style: GoogleFonts.manrope(fontSize: 12, color: Colors.grey[600]),
+            ),
+            Text(
+              subtitle,
+              style: GoogleFonts.manrope(fontSize: 10, color: Colors.grey[500]),
             ),
           ],
         ),

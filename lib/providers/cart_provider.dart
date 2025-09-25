@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:collection/collection.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/cart_item.dart';
+import '../utils/app_utils.dart';
 import '../models/product.dart';
 
 class CartProvider extends ChangeNotifier {
@@ -15,29 +18,75 @@ class CartProvider extends ChangeNotifier {
       _cartItems.fold(0, (sum, item) => sum + item.totalPrice);
 
   Future<void> loadCart() async {
+    if (_client.auth.currentUser == null) {
+      if (_cartItems.isNotEmpty) {
+        _cartItems = [];
+        notifyListeners();
+      }
+      return;
+    }
+
+    final wasLoading = _isLoading;
     _isLoading = true;
-    notifyListeners();
+    if (!wasLoading) {
+      notifyListeners();
+    }
+
     try {
       final userId = _client.auth.currentUser!.id;
       final response = await _client
           .from('cart_items')
           .select()
           .eq('user_id', userId);
-      _cartItems = response.map((json) => CartItem.fromJson(json)).toList();
+      final newItems = response.map((json) => CartItem.fromJson(json)).toList();
+
+      // Only update and notify if items actually changed
+      bool itemsChanged = !const ListEquality().equals(_cartItems, newItems);
+      if (itemsChanged) {
+        _cartItems = newItems;
+      }
+
+      _isLoading = false;
+
+      // Only notify if loading state changed or items changed
+      if (wasLoading || itemsChanged) {
+        notifyListeners();
+      }
     } catch (e) {
       print('Error loading cart: $e');
-      _cartItems = [];
-    } finally {
+      bool hadItems = _cartItems.isNotEmpty;
+      if (hadItems) {
+        _cartItems = [];
+      }
       _isLoading = false;
-      notifyListeners();
+
+      // Only notify if there was a change
+      if (wasLoading || hadItems) {
+        notifyListeners();
+      }
     }
   }
 
   Future<bool> addToCart(
+    BuildContext context,
     Product product,
     String selectedOption,
     int quantity,
   ) async {
+    // Check authentication first
+    if (!AppUtils.isUserAuthenticated(context)) {
+      final authResult = await AppUtils.requireAuthentication(
+        context,
+        title: 'Добавление в корзину',
+        message: 'Для добавления товаров в корзину необходимо войти в аккаунт',
+      );
+      if (!authResult) {
+        return false;
+      }
+      // Reload cart after authentication
+      await loadCart();
+    }
+
     _isLoading = true;
     notifyListeners();
 
@@ -81,6 +130,10 @@ class CartProvider extends ChangeNotifier {
   }
 
   Future<bool> removeFromCart(String itemId) async {
+    if (_client.auth.currentUser == null) {
+      return false;
+    }
+
     _isLoading = true;
     notifyListeners();
 
@@ -98,6 +151,10 @@ class CartProvider extends ChangeNotifier {
   }
 
   Future<bool> updateQuantity(String itemId, int newQuantity) async {
+    if (_client.auth.currentUser == null) {
+      return false;
+    }
+
     _isLoading = true;
     notifyListeners();
 
@@ -121,6 +178,10 @@ class CartProvider extends ChangeNotifier {
   }
 
   Future<bool> clearCart() async {
+    if (_client.auth.currentUser == null) {
+      return false;
+    }
+
     _isLoading = true;
     notifyListeners();
 
@@ -158,7 +219,10 @@ class CartProvider extends ChangeNotifier {
   }
 
   void updateCartItems(List<CartItem> items) {
-    _cartItems = items;
-    notifyListeners();
+    // Only update and notify if items actually changed
+    if (!const ListEquality().equals(_cartItems, items)) {
+      _cartItems = items;
+      notifyListeners();
+    }
   }
 }

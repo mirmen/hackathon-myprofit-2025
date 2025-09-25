@@ -42,7 +42,10 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
                 height: 50,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: ResponsiveUtils.getResponsivePadding(
+                    context,
+                    horizontal: 16,
+                  ),
                   itemCount: promotionsProvider.categories.length,
                   itemBuilder: (context, index) {
                     final category = promotionsProvider.categories[index];
@@ -50,7 +53,10 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
                         promotionsProvider.selectedCategory == category;
 
                     return Padding(
-                      padding: const EdgeInsets.only(right: 8),
+                      padding: ResponsiveUtils.getResponsivePadding(
+                        context,
+                        right: 8,
+                      ),
                       child: FilterChip(
                         label: Text(category),
                         selected: isSelected,
@@ -67,7 +73,10 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
                 child: RefreshIndicator(
                   onRefresh: () => promotionsProvider.loadPromotions(),
                   child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
+                    padding: ResponsiveUtils.getResponsivePadding(
+                      context,
+                      all: 16,
+                    ),
                     itemCount: promotionsProvider.promotions.length,
                     itemBuilder: (context, index) {
                       final promotion = promotionsProvider.promotions[index];
@@ -92,7 +101,7 @@ class PromotionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: ResponsiveUtils.getResponsiveMargin(context, bottom: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -108,7 +117,7 @@ class PromotionCard extends StatelessWidget {
               ),
             ),
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: ResponsiveUtils.getResponsivePadding(context, all: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

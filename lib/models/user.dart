@@ -8,6 +8,9 @@ class User {
   final int bonusPointsGoal;
   final List<String> activeSubscriptions;
   final String status;
+  final int currentStreak; // Add this field
+  final int longestStreak; // Add this field
+  final int quotesCount; // Add this field
 
   User({
     required this.id,
@@ -19,6 +22,9 @@ class User {
     required this.bonusPointsGoal,
     required this.activeSubscriptions,
     required this.status,
+    this.currentStreak = 0, // Add default value
+    this.longestStreak = 0, // Add default value
+    this.quotesCount = 0, // Add default value
   });
 
   double get bonusProgress => bonusPoints / bonusPointsGoal;
@@ -34,6 +40,9 @@ class User {
     int? bonusPointsGoal,
     List<String>? activeSubscriptions,
     String? status,
+    int? currentStreak,
+    int? longestStreak,
+    int? quotesCount,
   }) {
     return User(
       id: id ?? this.id,
@@ -45,6 +54,9 @@ class User {
       bonusPointsGoal: bonusPointsGoal ?? this.bonusPointsGoal,
       activeSubscriptions: activeSubscriptions ?? this.activeSubscriptions,
       status: status ?? this.status,
+      currentStreak: currentStreak ?? this.currentStreak,
+      longestStreak: longestStreak ?? this.longestStreak,
+      quotesCount: quotesCount ?? this.quotesCount,
     );
   }
 
@@ -59,6 +71,9 @@ class User {
       'bonus_points_goal': bonusPointsGoal,
       'active_subscriptions': activeSubscriptions,
       'status': status,
+      'current_streak': currentStreak,
+      'longest_streak': longestStreak,
+      'quotes_count': quotesCount,
     };
   }
 
@@ -75,6 +90,9 @@ class User {
         json['active_subscriptions'] ?? [],
       ),
       status: json['status'],
+      currentStreak: json['current_streak'] ?? 0,
+      longestStreak: json['longest_streak'] ?? 0,
+      quotesCount: json['quotes_count'] ?? 0,
     );
   }
 }

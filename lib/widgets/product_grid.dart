@@ -1,45 +1,35 @@
-// product_grid.dart
 import 'package:flutter/material.dart';
 import '../models/product.dart';
 import '../widgets/product_card.dart';
+import '../utils/app_utils.dart';
 
 class ProductGrid extends StatelessWidget {
   final List<Product> products;
-  final double screenWidth;
+  final double? screenWidth;
+  final double? screenHeight;
 
-  const ProductGrid({Key? key, required this.products, required this.screenWidth}) : super(key: key);
+  const ProductGrid({
+    Key? key,
+    required this.products,
+    this.screenWidth,
+    this.screenHeight,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final crossAxisCount = screenWidth > 600
-        ? 3
-        : screenWidth > 400
-        ? 2
-        : 2;
-    final childAspectRatio = screenWidth > 600
-        ? 0.65
-        : screenWidth > 400
-        ? 0.7
-        : 0.72;
-
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.symmetric(
-        horizontal: screenWidth * 0.04,
-        vertical: 16,
-      ),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
-        crossAxisSpacing: screenWidth * 0.04,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 16,
         mainAxisSpacing: 16,
-        childAspectRatio: childAspectRatio,
+        childAspectRatio: 0.75, // Improved aspect ratio for better presentation
       ),
       itemCount: products.length,
       itemBuilder: (context, index) {
-        return ProductCard(
-          product: products[index],
-        );
+        return ProductCard(product: products[index]);
       },
     );
   }

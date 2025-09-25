@@ -23,22 +23,20 @@ class _CartScreenState extends State<CartScreen> {
   @override
   void initState() {
     super.initState();
-    final authProvider = context.read<AuthProvider>();
-    if (authProvider.currentUser != null) {
-      context.read<CartProvider>().loadCart();
-      _cartStream = Supabase.instance.client
-          .from('cart_items')
-          .stream(primaryKey: ['id'])
-          .eq('user_id', authProvider.currentUser!.id);
-    } else {
-      // Handle not authenticated user
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        AppUtils.showErrorSnackBar(
-          context,
-          'Авторизуйтесь для просмотра корзины',
-        );
-      });
-    }
+    // Defer cart loading to avoid calling setState during build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authProvider = context.read<AuthProvider>();
+      if (authProvider.currentUser != null) {
+        context.read<CartProvider>().loadCart();
+        setState(() {
+          _cartStream = Supabase.instance.client
+              .from('cart_items')
+              .stream(primaryKey: ['id'])
+              .eq('user_id', authProvider.currentUser!.id);
+        });
+      }
+      // No need to show error for guests anymore - they can browse freely
+    });
   }
 
   @override
@@ -86,6 +84,11 @@ class _CartScreenState extends State<CartScreen> {
             return _buildEmptyCart(context);
           }
 
+          // Handle case where stream might not be initialized yet
+          if (_cartStream == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
           return StreamBuilder<List<Map<String, dynamic>>>(
             stream: _cartStream,
             builder: (context, snapshot) {
@@ -100,7 +103,10 @@ class _CartScreenState extends State<CartScreen> {
                 final items = snapshot.data!
                     .map((json) => CartItem.fromJson(json))
                     .toList();
-                cartProvider.updateCartItems(items);
+                // Defer the update to avoid calling notifyListeners during build
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  cartProvider.updateCartItems(items);
+                });
               }
               return _buildCartWithItems(cartProvider);
             },
@@ -113,7 +119,7 @@ class _CartScreenState extends State<CartScreen> {
   Widget _buildEmptyCart(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32.0),
+        padding: ResponsiveUtils.getResponsivePadding(context, all: 32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -122,37 +128,43 @@ class _CartScreenState extends State<CartScreen> {
               size: 64,
               color: Colors.grey[400],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: ResponsiveUtils.responsivePadding(context, 16)),
             Text(
               "Здесь пока пусто",
               style: GoogleFonts.manrope(
-                fontSize: 18,
+                fontSize: ResponsiveUtils.responsiveFontSize(context, 18),
                 fontWeight: FontWeight.w600,
                 color: AppConstants.textPrimaryColor,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: ResponsiveUtils.responsivePadding(context, 8)),
             Text(
               "Добавьте товары в корзину из каталога",
-              style: GoogleFonts.manrope(fontSize: 14, color: Colors.grey[600]),
+              style: GoogleFonts.manrope(
+                fontSize: ResponsiveUtils.responsiveFontSize(context, 14),
+                color: Colors.grey[600],
+              ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: ResponsiveUtils.responsivePadding(context, 24)),
             SizedBox(
               width: double.infinity,
-              height: 50,
+              height: ResponsiveUtils.getButtonHeight(context),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppConstants.primaryColor,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
+                    borderRadius: ResponsiveUtils.responsiveBorderRadius(
+                      context,
+                      25,
+                    ),
                   ),
                 ),
-                onPressed: () => DefaultTabController.of(context).animateTo(0),
+                onPressed: () => Navigator.pop(context),
                 child: Text(
                   "В КАТАЛОГ",
                   style: GoogleFonts.manrope(
-                    fontSize: 16,
+                    fontSize: ResponsiveUtils.responsiveFontSize(context, 16),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -180,29 +192,43 @@ class _CartScreenState extends State<CartScreen> {
                 background: Container(
                   color: Colors.red,
                   alignment: Alignment.centerRight,
-                  padding: const EdgeInsets.only(right: 20),
+                  padding: ResponsiveUtils.getResponsivePadding(
+                    context,
+                    right: 20,
+                  ),
                   child: Icon(Icons.delete, color: Colors.white),
                 ),
                 child: Card(
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                      AppConstants.borderRadius,
+                    borderRadius: ResponsiveUtils.responsiveBorderRadius(
+                      context,
+                      AppConstants.baseBorderRadius,
                     ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(AppConstants.paddingSmall),
+                    padding: ResponsiveUtils.getResponsivePadding(
+                      context,
+                      all: AppConstants.basePaddingSmall,
+                    ),
                     child: Row(
                       children: [
                         ProductCachedImage(
                           imageUrl: item.imageUrl,
                           productType: item.type,
-                          width: AppUtils.isSmallScreen(context) ? 60 : 80,
-                          height: AppUtils.isSmallScreen(context) ? 60 : 80,
+                          width: AppUtils.isSmallScreen(context)
+                              ? ResponsiveUtils.responsiveSize(context, 60)
+                              : ResponsiveUtils.responsiveSize(context, 80),
+                          height: AppUtils.isSmallScreen(context)
+                              ? ResponsiveUtils.responsiveSize(context, 60)
+                              : ResponsiveUtils.responsiveSize(context, 80),
                           borderRadius: BorderRadius.circular(
-                            AppConstants.borderRadius - 4,
+                            ResponsiveUtils.responsivePadding(
+                              context,
+                              AppConstants.baseBorderRadius - 4,
+                            ),
                           ),
                         ),
-                        SizedBox(width: AppConstants.paddingMedium),
+                        SizedBox(width: AppConstants.paddingMedium(context)),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -268,7 +294,10 @@ class _CartScreenState extends State<CartScreen> {
                             Text(
                               '${item.quantity}',
                               style: GoogleFonts.manrope(
-                                fontSize: 16,
+                                fontSize: ResponsiveUtils.responsiveFontSize(
+                                  context,
+                                  16,
+                                ),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -290,7 +319,7 @@ class _CartScreenState extends State<CartScreen> {
           ),
         ),
         Container(
-          padding: EdgeInsets.all(AppConstants.paddingMedium),
+          padding: EdgeInsets.all(AppConstants.paddingMedium(context)),
           decoration: BoxDecoration(
             color: Colors.white,
             boxShadow: [
@@ -309,7 +338,7 @@ class _CartScreenState extends State<CartScreen> {
                   Text(
                     'Итого',
                     style: GoogleFonts.manrope(
-                      fontSize: 18,
+                      fontSize: ResponsiveUtils.responsiveFontSize(context, 18),
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -326,13 +355,16 @@ class _CartScreenState extends State<CartScreen> {
               SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
-                height: 50,
+                height: ResponsiveUtils.getButtonHeight(context),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppConstants.primaryColor,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25),
+                      borderRadius: ResponsiveUtils.responsiveBorderRadius(
+                        context,
+                        25,
+                      ),
                     ),
                   ),
                   onPressed: cartProvider.isLoading
@@ -354,7 +386,10 @@ class _CartScreenState extends State<CartScreen> {
                       : Text(
                           "ОФОРМИТЬ ЗАКАЗ",
                           style: GoogleFonts.manrope(
-                            fontSize: 16,
+                            fontSize: ResponsiveUtils.responsiveFontSize(
+                              context,
+                              16,
+                            ),
                             fontWeight: FontWeight.w600,
                           ),
                         ),

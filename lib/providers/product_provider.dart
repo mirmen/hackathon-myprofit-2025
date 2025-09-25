@@ -23,17 +23,68 @@ class ProductProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   Future<void> loadProducts() async {
+    print('🔄 Начало загрузки продуктов...');
     _isLoading = true;
     notifyListeners();
 
     try {
-      final response = await _client.from('products').select();
-      _products = response.map((json) => Product.fromJson(json)).toList();
-      _applyFilters();
-    } catch (e) {
-      print('Error loading products: $e');
+      print('📡 Делаем запрос к таблице products...');
+
+      List<dynamic> response = [];
+
+      // Сначала пробуем без явного указания схемы
+      try {
+        print('🚀 Пробуем запрос без указания схемы...');
+        response = await _client.from('products').select();
+        print('📊 Результат первого запроса: ${response.length} элементов');
+      } catch (e) {
+        print('❌ Первый запрос не удался: $e');
+      }
+
+      // Если пусто, пробуем с явным указанием схемы public
+      if (response.isEmpty) {
+        try {
+          print(
+            '⚠️ Первый запрос вернул пусто, пробуем с явной схемой public...',
+          );
+          response = await _client.schema('public').from('products').select();
+          print('📊 Результат второго запроса: ${response.length} элементов');
+        } catch (e) {
+          print('❌ Второй запрос тоже не удался: $e');
+        }
+      }
+
+      print('✅ Ответ от Supabase получен');
+      print('📊 Сырые данные: $response');
+      print('📈 Количество элементов: ${response.length}');
+
+      if (response.isEmpty) {
+        print('⚠️ В базе нет продуктов!');
+        _products = [];
+        _filteredProducts = [];
+      } else {
+        print('🔄 Конвертация данных в объекты Product...');
+        _products = response
+            .map<Product>(
+              (json) => Product.fromJson(json as Map<String, dynamic>),
+            )
+            .toList();
+        print('✅ Загружено ${_products.length} продуктов');
+
+        // Применяем фильтры (категории и поиск)
+        _applyFilters();
+        print(
+          '✅ Фильтры применены, ${_filteredProducts.length} продуктов после фильтрации',
+        );
+      }
+    } catch (e, stackTrace) {
+      print('❌ Ошибка при загрузке продуктов: $e');
+      print('📍 Stack trace: $stackTrace');
+      _products = [];
+      _filteredProducts = [];
     } finally {
       _isLoading = false;
+      print('🏁 Загрузка продуктов завершена');
       notifyListeners();
     }
   }
@@ -78,6 +129,7 @@ class ProductProvider extends ChangeNotifier {
   Future<Product?> getProductById(String id) async {
     try {
       final response = await _client
+          .schema('public')
           .from('products')
           .select()
           .eq('id', id)
