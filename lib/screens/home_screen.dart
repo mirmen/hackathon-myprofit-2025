@@ -134,41 +134,80 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
-            // Keep only one action button in the app bar
-            Container(
-              margin: EdgeInsets.only(
-                right: ResponsiveUtils.responsivePadding(context, 8),
-              ),
-              child: IconButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/cart');
-                },
-                icon: Container(
-                  padding: ResponsiveUtils.getResponsivePadding(
-                    context,
-                    all: 8,
+            // Кнопка корзины с количеством товаров
+            Consumer<CartProvider>(
+              builder: (context, cartProvider, child) {
+                return Container(
+                  margin: EdgeInsets.only(
+                    right: ResponsiveUtils.responsivePadding(context, 8),
                   ),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(
-                      ResponsiveUtils.responsivePadding(context, 12),
-                    ),
-                    border: Border.all(color: AppColors.divider, width: 0.5),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.04),
-                        blurRadius: 8,
-                        offset: const Offset(0, 2),
+                  child: Stack(
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/cart');
+                        },
+                        icon: Container(
+                          padding: ResponsiveUtils.getResponsivePadding(
+                            context,
+                            all: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(
+                              ResponsiveUtils.responsivePadding(context, 12),
+                            ),
+                            border: Border.all(
+                              color: AppColors.divider,
+                              width: 0.5,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.04),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.shopping_bag_outlined,
+                            color: AppColors.onSurface,
+                            size: ResponsiveUtils.responsiveIconSize(
+                              context,
+                              20,
+                            ),
+                          ),
+                        ),
                       ),
+                      if (cartProvider.itemCount > 0)
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          child: Container(
+                            padding: EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            constraints: BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Text(
+                              '${cartProvider.itemCount}',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
                     ],
                   ),
-                  child: Icon(
-                    Icons.shopping_bag_outlined,
-                    color: AppColors.onSurface,
-                    size: ResponsiveUtils.responsiveIconSize(context, 20),
-                  ),
-                ),
-              ),
+                );
+              },
             ),
           ],
         ),

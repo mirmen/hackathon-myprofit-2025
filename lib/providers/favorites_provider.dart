@@ -3,15 +3,28 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../utils/app_utils.dart';
 
+/// Провайдер для управления избранными товарами
+/// Обрабатывает добавление, удаление товаров в избранное
 class FavoritesProvider extends ChangeNotifier {
+  /// Клиент Supabase для работы с базой данных
   final SupabaseClient _client = Supabase.instance.client;
+
+  /// Множество ID избранных продуктов
   Set<String> _favoriteProductIds = {};
+
+  /// Флаг загрузки данных избранного
   bool _isLoading = false;
+
+  /// Геттер для проверки состояния загрузки
   bool get isLoading => _isLoading;
 
+  /// Геттер для доступа к ID избранных продуктов
   Set<String> get favoriteProductIds => _favoriteProductIds;
 
+  /// Загрузка списка избранных товаров текущего пользователя
+  /// Выполняет запрос к таблице favorites по ID пользователя
   Future<void> loadFavorites() async {
+    // Если пользователь не авторизован, очищаем список избранных
     if (_client.auth.currentUser == null) {
       _favoriteProductIds = {};
       return;
@@ -26,9 +39,10 @@ class FavoritesProvider extends ChangeNotifier {
           .from('favorites')
           .select('product_id')
           .eq('user_id', userId);
+      // Преобразуем ответ в множество ID продуктов
       _favoriteProductIds = Set.from(response.map((e) => e['product_id']));
     } catch (e) {
-      print('Error loading favorites: $e');
+      print('Ошибка при загрузке избранного: $e');
       _favoriteProductIds = {};
     } finally {
       _isLoading = false;
@@ -36,8 +50,13 @@ class FavoritesProvider extends ChangeNotifier {
     }
   }
 
+  /// Переключение состояния избранного для товара
+  /// Если товар был в избранном - удаляет, если не был - добавляет
+  /// @param context - контекст для проверки аутентификации
+  /// @param productId - ID продукта для переключения
+  /// @return true если успешно, false если произошла ошибка
   Future<bool> toggleFavorite(BuildContext context, String productId) async {
-    // Check authentication first
+    // Проверяем аутентификацию перед изменением избранного
     if (!AppUtils.isUserAuthenticated(context)) {
       final authResult = await AppUtils.requireAuthentication(
         context,
@@ -47,7 +66,7 @@ class FavoritesProvider extends ChangeNotifier {
       if (!authResult) {
         return false;
       }
-      // Reload favorites after authentication
+      // Перезагружаем избранное после аутентификации
       await loadFavorites();
     }
 
@@ -57,12 +76,14 @@ class FavoritesProvider extends ChangeNotifier {
     try {
       final userId = _client.auth.currentUser!.id;
       if (_favoriteProductIds.contains(productId)) {
+        // Если товар уже в избранном, удаляем его
         await _client.from('favorites').delete().match({
           'user_id': userId,
           'product_id': productId,
         });
         _favoriteProductIds.remove(productId);
       } else {
+        // Если товара нет в избранном, добавляем его
         await _client.from('favorites').insert({
           'user_id': userId,
           'product_id': productId,
@@ -71,7 +92,7 @@ class FavoritesProvider extends ChangeNotifier {
       }
       return true;
     } catch (e) {
-      print('Error toggling favorite: $e');
+      print('Ошибка при переключении избранного: $e');
       return false;
     } finally {
       _isLoading = false;
@@ -79,12 +100,19 @@ class FavoritesProvider extends ChangeNotifier {
     }
   }
 
+  /// Проверка, находится ли товар в избранном
+  /// @param productId - ID продукта для проверки
+  /// @return true если товар в избранном, false если нет
   bool isFavorite(String productId) {
     return _favoriteProductIds.contains(productId);
   }
 
+  /// Добавление товара в избранное
+  /// @param context - контекст для проверки аутентификации
+  /// @param productId - ID продукта для добавления
+  /// @return true если успешно, false если произошла ошибка
   Future<bool> addToFavorites(BuildContext context, String productId) async {
-    // Check authentication first
+    // Проверяем аутентификацию перед добавлением в избранное
     if (!AppUtils.isUserAuthenticated(context)) {
       final authResult = await AppUtils.requireAuthentication(
         context,
@@ -94,7 +122,7 @@ class FavoritesProvider extends ChangeNotifier {
       if (!authResult) {
         return false;
       }
-      // Reload favorites after authentication
+      // Перезагружаем избранное после аутентификации
       await loadFavorites();
     }
 
@@ -110,7 +138,7 @@ class FavoritesProvider extends ChangeNotifier {
       _favoriteProductIds.add(productId);
       return true;
     } catch (e) {
-      print('Error adding to favorites: $e');
+      print('Ошибка при добавлении в избранное: $e');
       return false;
     } finally {
       _isLoading = false;
@@ -118,7 +146,11 @@ class FavoritesProvider extends ChangeNotifier {
     }
   }
 
+  /// Удаление товара из избранного
+  /// @param productId - ID продукта для удаления
+  /// @return true если успешно, false если произошла ошибка
   Future<bool> removeFromFavorites(String productId) async {
+    // Проверяем авторизацию
     if (_client.auth.currentUser == null) {
       return false;
     }
@@ -135,7 +167,7 @@ class FavoritesProvider extends ChangeNotifier {
       _favoriteProductIds.remove(productId);
       return true;
     } catch (e) {
-      print('Error removing from favorites: $e');
+      print('Ошибка при удалении из избранного: $e');
       return false;
     } finally {
       _isLoading = false;
@@ -143,7 +175,10 @@ class FavoritesProvider extends ChangeNotifier {
     }
   }
 
+  /// Очистка всего списка избранного
+  /// @return true если успешно, false если произошла ошибка
   Future<bool> clearFavorites() async {
+    // Проверяем авторизацию
     if (_client.auth.currentUser == null) {
       return false;
     }
@@ -153,11 +188,12 @@ class FavoritesProvider extends ChangeNotifier {
 
     try {
       final userId = _client.auth.currentUser!.id;
+      // Удаляем все записи избранного для текущего пользователя
       await _client.from('favorites').delete().eq('user_id', userId);
       _favoriteProductIds.clear();
       return true;
     } catch (e) {
-      print('Error clearing favorites: $e');
+      print('Ошибка при очистке избранного: $e');
       return false;
     } finally {
       _isLoading = false;

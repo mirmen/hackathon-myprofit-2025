@@ -39,7 +39,7 @@ class AppConstants {
       ResponsiveUtils.responsivePadding(context, basePaddingLarge);
 }
 
-// Screen size breakpoints
+// Точки останова размера экрана
 enum ScreenSize { small, medium, large, extraLarge }
 
 class ResponsiveUtils {
@@ -47,7 +47,7 @@ class ResponsiveUtils {
   static const double _minPhoneWidth = 320.0;
   static const double _maxPhoneWidth = 500.0;
 
-  // Get screen dimensions
+  // Получить размеры экрана
   static Size getScreenSize(BuildContext context) {
     return MediaQuery.of(context).size;
   }
@@ -60,22 +60,22 @@ class ResponsiveUtils {
     return MediaQuery.of(context).size.height;
   }
 
-  // Get device pixel ratio
+  // Получить соотношение пикселей устройства
   static double getPixelRatio(BuildContext context) {
     return MediaQuery.of(context).devicePixelRatio;
   }
 
-  // Get safe area padding
+  // Получить отступы безопасной области
   static EdgeInsets getSafeAreaInsets(BuildContext context) {
     return MediaQuery.of(context).padding;
   }
 
-  // Get viewport insets (keyboard, etc.)
+  // Получить вставки области просмотра (клавиатура и т.д.)
   static EdgeInsets getViewInsets(BuildContext context) {
     return MediaQuery.of(context).viewInsets;
   }
 
-  // Determine screen type based on width
+  // Определить тип экрана по ширине
   static ScreenSize getScreenType(BuildContext context) {
     final width = getScreenWidth(context);
     if (width < 360) return ScreenSize.small;
@@ -143,17 +143,17 @@ class ResponsiveUtils {
     return baseSize; // Просто возвращаем базовый размер
   }
 
-  // Responsive width as percentage of screen width
+  // Адаптивная ширина в процентах от ширины экрана
   static double widthPercentage(BuildContext context, double percentage) {
     return getScreenWidth(context) * (percentage / 100);
   }
 
-  // Responsive height as percentage of screen height
+  // Адаптивная высота в процентах от высоты экрана
   static double heightPercentage(BuildContext context, double percentage) {
     return getScreenHeight(context) * (percentage / 100);
   }
 
-  // Safe area aware heights
+  // Высоты с учетом безопасной области
   static double availableHeight(BuildContext context) {
     final screenHeight = getScreenHeight(context);
     final padding = getSafeAreaInsets(context);
@@ -167,7 +167,7 @@ class ResponsiveUtils {
     return screenWidth - padding.left - padding.right;
   }
 
-  // Grid layout calculations
+  // Расчеты сеточного макета
   static int getGridColumns(BuildContext context) {
     final availableWidth = ResponsiveUtils.availableWidth(context);
     final minCardWidth = responsiveSize(context, 150);
@@ -177,13 +177,13 @@ class ResponsiveUtils {
     return columns.clamp(2, 4);
   }
 
-  // Card aspect ratio based on content type and screen size
+  // Соотношение сторон карточки в зависимости от типа контента и размера экрана
   static double getCardAspectRatio(BuildContext context) {
-    // Improved aspect ratios for better design and text readability
+    // Улучшенные соотношения сторон для лучшего дизайна и читаемости текста
     if (isTablet(context)) return 0.75;
     return isSmallScreen(context)
         ? 0.62
-        : 0.67; // Provide more vertical space for improved design
+        : 0.67; // Обеспечить больше вертикального пространства для улучшенного дизайна
   }
 
   // АБСОЛЮТНО ФИКСИРОВАННЫЕ ВЫСОТЫ - НИКАКИХ переполнений!
@@ -216,7 +216,7 @@ class ResponsiveUtils {
     }
   }
 
-  // АБСОЛЮТНО БЕЗОПАСНЫЕ МЕТОДЫ PADDING/MARGIN
+  // АБСОЛЮТНО БЕЗОПАСНЫЕ МЕТОДЫ ОТСТУПОВ/МАРЖИНА
   static EdgeInsets getResponsiveMargin(
     BuildContext context, {
     double? horizontal,
@@ -263,7 +263,7 @@ class ResponsiveUtils {
     );
   }
 
-  // АБСОЛЮТНО БЕЗОПАСНЫЕ BORDER RADIUS
+  // АБСОЛЮТНО БЕЗОПАСНЫЕ РАДИУСЫ СКРУГЛЕНИЯ
   static BorderRadius responsiveBorderRadius(
     BuildContext context,
     double radius,
@@ -271,7 +271,7 @@ class ResponsiveUtils {
     return BorderRadius.circular(radius); // НИКАКОЙ адаптации!
   }
 
-  // ФИКСИРОВАННЫЕ КОНСТРЕЙНТЫ - НИКАКИХ переполнений!
+  // ФИКСИРОВАННЫЕ ОГРАНИЧЕНИЯ - НИКАКИХ переполнений!
   static BoxConstraints getResponsiveConstraints(
     BuildContext context, {
     double? minWidth,
@@ -287,7 +287,7 @@ class ResponsiveUtils {
     );
   }
 
-  // ФИКСИРОВАННЫЕ МЕТОДЫ (backward compatibility)
+  // ФИКСИРОВАННЫЕ МЕТОДЫ (обратная совместимость)
   static double getFontSize(
     BuildContext context, {
     required double small,
@@ -418,7 +418,7 @@ class AppUtils {
     }
   }
 
-  // Legacy methods for backward compatibility
+  // Устаревшие методы для обратной совместимости
   static bool isSmallScreen(BuildContext context) {
     return ResponsiveUtils.isSmallScreen(context);
   }
@@ -471,7 +471,7 @@ class AppUtils {
     }
   }
 
-  // Authentication helper methods
+  // Вспомогательные методы аутентификации
   static bool isUserAuthenticated(BuildContext context) {
     final authProvider = context.read<AuthProvider>();
     return authProvider.currentUser != null;

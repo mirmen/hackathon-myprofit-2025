@@ -9,6 +9,7 @@ import '../providers/auth_provider.dart';
 import '../models/cart_item.dart';
 import '../utils/app_utils.dart';
 import '../utils/cached_image_widget.dart';
+import '../theme/app_theme.dart';
 
 class CartScreen extends StatefulWidget {
   const CartScreen({super.key});
@@ -23,7 +24,7 @@ class _CartScreenState extends State<CartScreen> {
   @override
   void initState() {
     super.initState();
-    // Defer cart loading to avoid calling setState during build
+    // Откладываем загрузку корзины, чтобы избежать вызова setState во время сборки
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final authProvider = context.read<AuthProvider>();
       if (authProvider.currentUser != null) {
@@ -35,7 +36,7 @@ class _CartScreenState extends State<CartScreen> {
               .eq('user_id', authProvider.currentUser!.id);
         });
       }
-      // No need to show error for guests anymore - they can browse freely
+      // Больше не нужно показывать ошибку для гостей - они могут свободно просматривать
     });
   }
 
@@ -84,7 +85,7 @@ class _CartScreenState extends State<CartScreen> {
             return _buildEmptyCart(context);
           }
 
-          // Handle case where stream might not be initialized yet
+          // Обрабатываем случай, когда поток еще не инициализирован
           if (_cartStream == null) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -100,12 +101,9 @@ class _CartScreenState extends State<CartScreen> {
                 return Center(child: Text('Ошибка: ${snapshot.error}'));
               }
               if (snapshot.hasData) {
-                final items = snapshot.data!
-                    .map((json) => CartItem.fromJson(json))
-                    .toList();
-                // Defer the update to avoid calling notifyListeners during build
+                // Вместо вызова updateCartItems (которого не существует), мы перезагружаем корзину
                 WidgetsBinding.instance.addPostFrameCallback((_) {
-                  cartProvider.updateCartItems(items);
+                  cartProvider.loadCart();
                 });
               }
               return _buildCartWithItems(cartProvider);
@@ -422,7 +420,7 @@ class _CartScreenState extends State<CartScreen> {
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
-              // Logic for order creation
+              // Логика создания заказа
               final client = Supabase.instance.client;
               final orderData = {
                 'user_id': client.auth.currentUser!.id,
@@ -432,8 +430,8 @@ class _CartScreenState extends State<CartScreen> {
                 'total_price': cartProvider.totalPrice,
                 'status': 'pending',
               };
-              // Uncomment when orders table is created
-              // await client.from('orders').insert(orderData);
+              // Раскомментировать когда таблица заказов будет создана
+              // await client.from('orders').insert(orderData); // Раскомментировать когда таблица заказов будет создана
               await cartProvider.clearCart();
               AppUtils.showSuccessSnackBar(
                 context,

@@ -78,18 +78,20 @@ CREATE TABLE profiles (
   bonus_points INTEGER DEFAULT 0,
   bonus_points_goal INTEGER DEFAULT 1000,
   active_subscriptions TEXT[] DEFAULT '{}',
-  status TEXT DEFAULT 'active'
+  status TEXT DEFAULT 'active',
+  role TEXT DEFAULT 'user'  
 );
 
--- Функция создания профиля при регистрации
-CREATE FUNCTION handle_new_user()
+
+CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (id, name, email)
+  INSERT INTO public.profiles (id, name, email, role)
   VALUES (
     NEW.id, 
     COALESCE(NEW.raw_user_meta_data->>'name', NEW.email), 
-    NEW.email
+    NEW.email,
+    'user'  -- Дефолт роль для новых пользователей
   );
   RETURN NEW;
 END;

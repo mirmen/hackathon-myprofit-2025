@@ -4,8 +4,8 @@ import 'home_screen.dart';
 import 'clubs_screen.dart';
 import 'news_feed_screen.dart';
 import 'profile_screen.dart';
-import 'cart_screen.dart';
 import '../providers/auth_provider.dart';
+import '../providers/cart_provider.dart';
 import 'auth_screen.dart'; // Новый экран
 
 class MainScreen extends StatefulWidget {
@@ -21,7 +21,6 @@ class _MainScreenState extends State<MainScreen> {
     ClubsScreen(),
     NewsFeedScreen(),
     ProfileScreen(),
-    CartScreen(),
   ];
 
   @override
@@ -39,7 +38,7 @@ class _MainScreenState extends State<MainScreen> {
         context,
         MaterialPageRoute(builder: (_) => AuthScreen()),
       ).then((value) {
-        // Force a rebuild to update the UI based on auth status
+        // Принудительная перестройка для обновления UI в зависимости от статуса авторизации
         setState(() {});
       });
     }
@@ -86,11 +85,6 @@ class _MainScreenState extends State<MainScreen> {
               icon: Icon(Icons.person_outline),
               activeIcon: Icon(Icons.person),
               label: 'Профиль',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_bag_outlined),
-              activeIcon: Icon(Icons.shopping_bag),
-              label: 'Корзина',
             ),
           ],
           currentIndex: _selectedIndex,

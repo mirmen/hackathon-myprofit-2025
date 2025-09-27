@@ -30,40 +30,40 @@ ThemeData getAppTheme() {
     ),
     scaffoldBackgroundColor: AppColors.background,
 
-    // Responsive Typography Scale Builder
+    // Построитель адаптивной типографической шкалы
     textTheme: _buildResponsiveTextTheme(),
 
-    // Responsive Button Styles
+    // Адаптивные стили кнопок
     elevatedButtonTheme: _buildResponsiveElevatedButtonTheme(),
     filledButtonTheme: _buildResponsiveFilledButtonTheme(),
     outlinedButtonTheme: _buildResponsiveOutlinedButtonTheme(),
     textButtonTheme: _buildResponsiveTextButtonTheme(),
 
-    // Responsive Card Style
+    // Адаптивный стиль карточек
     cardTheme: _buildResponsiveCardTheme(),
 
-    // Responsive App Bar
+    // Адаптивная панель приложения
     appBarTheme: _buildResponsiveAppBarTheme(),
 
-    // Responsive Bottom Navigation
+    // Адаптивная нижняя навигация
     bottomNavigationBarTheme: _buildResponsiveBottomNavTheme(),
 
-    // Responsive Input Decoration
+    // Адаптивное оформление полей ввода
     inputDecorationTheme: _buildResponsiveInputTheme(),
 
-    // Responsive Chip Theme
+    // Адаптивная тема чипсов
     chipTheme: _buildResponsiveChipTheme(),
 
-    // Responsive Divider
+    // Адаптивный разделитель
     dividerTheme: _buildResponsiveDividerTheme(),
   );
 }
 
-// Helper functions for responsive theme components
+// Вспомогательные функции для адаптивных компонентов темы
 TextTheme _buildResponsiveTextTheme() {
   return TextTheme(
     displayLarge: GoogleFonts.montserrat(
-      fontSize: 32, // Will be scaled responsively
+      fontSize: 32, // Будет масштабироваться адаптивно
       fontWeight: FontWeight.w800,
       color: AppColors.onSurface,
       letterSpacing: -0.5,
@@ -156,9 +156,9 @@ ElevatedButtonThemeData _buildResponsiveElevatedButtonTheme() {
       padding: EdgeInsets.symmetric(
         horizontal: 24,
         vertical: 16,
-      ), // Will be handled in widgets
+      ), // Будет обработано в виджетах
       textStyle: GoogleFonts.montserrat(
-        fontSize: 14, // Will be scaled in widgets
+        fontSize: 14, // Будет масштабировано в виджетах
         fontWeight: FontWeight.w600,
         letterSpacing: 0.5,
       ),
@@ -227,7 +227,7 @@ AppBarTheme _buildResponsiveAppBarTheme() {
     foregroundColor: AppColors.onSurface,
     elevation: 0,
     centerTitle: false,
-    titleSpacing: 20, // Will be scaled in widgets
+    titleSpacing: 20, // Будет масштабировано в виджетах
     titleTextStyle: GoogleFonts.montserrat(
       fontSize: 20,
       fontWeight: FontWeight.w700,

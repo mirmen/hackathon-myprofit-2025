@@ -8,12 +8,15 @@ import '../providers/favorites_provider.dart';
 import '../utils/app_utils.dart';
 import 'auth_screen.dart';
 
+/// Экран профиля пользователя
+/// Отображает информацию о пользователе, статистику и настройки
 class ProfileScreen extends StatefulWidget {
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  /// Загрузка данных пользователя при инициализации экрана
   @override
   void initState() {
     super.initState();
@@ -49,6 +52,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       body: Consumer2<AuthProvider, UserProvider>(
         builder: (context, authProvider, userProvider, child) {
+          // Если пользователь не авторизован, показываем приглашение войти
           if (authProvider.currentUser == null) {
             return Center(
               child: Column(
@@ -86,20 +90,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
             );
           }
 
+          // Показываем индикатор загрузки пока данные пользователя загружаются
           if (userProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
 
           final user = userProvider.currentUser;
+          // Если данные пользователя не загрузились, показываем ошибку
           if (user == null) {
             return const Center(child: Text('Ошибка загрузки профиля'));
           }
 
+          // Основной контент профиля
           return SingleChildScrollView(
             padding: ResponsiveUtils.getResponsivePadding(context, all: 16),
             child: Column(
               children: [
-                // Profile header
+                // Шапка профиля с аватаром и основной информацией
                 Card(
                   child: Padding(
                     padding: ResponsiveUtils.getResponsivePadding(
@@ -158,7 +165,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 16),
 
-                // Bonus points
+                // Бонусные баллы пользователя
                 Card(
                   child: Padding(
                     padding: ResponsiveUtils.getResponsivePadding(
@@ -217,7 +224,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        // Add book exchange info
+                        // Информация о книгообмене
                         Row(
                           children: [
                             Icon(
@@ -249,7 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 16),
 
-                // Quick stats
+                // Карточки быстрой статистики
                 Row(
                   children: [
                     Expanded(
@@ -280,7 +287,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 16),
 
-                // Reading stats
+                // Статистика чтения
                 Row(
                   children: [
                     Expanded(
@@ -313,7 +320,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                 const SizedBox(height: 16),
 
-                // Settings
+                // Настройки приложения
                 Card(
                   child: Column(
                     children: [
@@ -374,6 +381,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  /// Создание карточки со статистикой
   Widget _buildStatCard(String title, String value, IconData icon) {
     return Card(
       child: Padding(
@@ -401,6 +409,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  /// Создание карточки серии чтения
   Widget _buildStreakCard(
     String title,
     String value,
@@ -437,6 +446,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  /// Форматирование даты в удобочитаемый формат
   String _formatDate(DateTime date) {
     final months = [
       'января',
@@ -455,6 +465,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
 
+  /// Показ диалога подтверждения выхода из аккаунта
   void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,

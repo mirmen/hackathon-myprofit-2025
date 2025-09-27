@@ -5,6 +5,7 @@ import '../providers/auth_provider.dart';
 import '../providers/user_provider.dart';
 import '../theme/app_theme.dart';
 import '../utils/app_utils.dart';
+import '../widgets/role_selection_dialog.dart';
 import 'main_screen.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -73,9 +74,38 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
       }
 
       if (authProvider.currentUser != null) {
-        await context.read<UserProvider>().loadUserProfile();
-        // Navigate back to MainScreen instead of popping
-        Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+        final userProvider = context.read<UserProvider>();
+        await userProvider.loadUserProfile();
+
+        // Check user role and navigate accordingly
+        final user = userProvider.currentUser;
+        if (user != null) {
+          if (user.role == 'admin') {
+            // Show role selection dialog for admin users
+            final selectedRole = await showDialog<String>(
+              context: context,
+              builder: (context) => RoleSelectionDialog(userName: user.name),
+            );
+
+            if (selectedRole == 'admin') {
+              // Navigate to admin panel
+              Navigator.pushNamedAndRemoveUntil(
+                context,
+                '/admin',
+                (route) => false,
+              );
+            } else {
+              // Navigate to main screen (regular user mode)
+              Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+            }
+          } else {
+            // Regular user - navigate to main screen
+            Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+          }
+        } else {
+          // Fallback navigation
+          Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+        }
       }
     } catch (e) {
       _showErrorSnackBar(e.toString());
@@ -166,6 +196,7 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
     return Column(
       children: [
         Container(
+          // Removed GestureDetector
           padding: ResponsiveUtils.getResponsivePadding(context, all: 24),
           decoration: BoxDecoration(
             color: AppColors.primary.withOpacity(0.1),
@@ -348,32 +379,36 @@ class _AuthScreenState extends State<AuthScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildToggleButton() {
-    return TextButton(
-      onPressed: () {
-        setState(() {
-          _isLogin = !_isLogin;
-        });
-      },
-      child: RichText(
-        text: TextSpan(
-          text: _isLogin ? 'Нет аккаунта? ' : 'Уже есть аккаунт? ',
-          style: GoogleFonts.montserrat(
-            fontSize: ResponsiveUtils.responsiveFontSize(context, 14),
-            fontWeight: FontWeight.w400,
-            color: AppColors.textLight,
-          ),
-          children: [
-            TextSpan(
-              text: _isLogin ? 'Создать' : 'Войти',
+    return Column(
+      children: [
+        TextButton(
+          onPressed: () {
+            setState(() {
+              _isLogin = !_isLogin;
+            });
+          },
+          child: RichText(
+            text: TextSpan(
+              text: _isLogin ? 'Нет аккаунта? ' : 'Уже есть аккаунт? ',
               style: GoogleFonts.montserrat(
                 fontSize: ResponsiveUtils.responsiveFontSize(context, 14),
-                fontWeight: FontWeight.w600,
-                color: AppColors.primary,
+                fontWeight: FontWeight.w400,
+                color: AppColors.textLight,
               ),
+              children: [
+                TextSpan(
+                  text: _isLogin ? 'Создать' : 'Войти',
+                  style: GoogleFonts.montserrat(
+                    fontSize: ResponsiveUtils.responsiveFontSize(context, 14),
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }

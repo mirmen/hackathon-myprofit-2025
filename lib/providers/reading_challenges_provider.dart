@@ -2,14 +2,24 @@ import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/reading_challenge.dart';
 
+/// Провайдер для управления_reading челленджами
+/// Обрабатывает загрузку, создание и участие в_reading челленджах
 class ReadingChallengesProvider extends ChangeNotifier {
+  /// Клиент Supabase для взаимодействия с базой данных
   final SupabaseClient _client = Supabase.instance.client;
+
+  /// Список_reading челленджей
   List<ReadingChallenge> _challenges = [];
+
+  /// Флаг загрузки данных
   bool _isLoading = false;
 
+  /// Геттеры для доступа к данным
   List<ReadingChallenge> get challenges => _challenges;
   bool get isLoading => _isLoading;
 
+  /// Загрузка всех_reading челленджей из базы данных
+  /// Сортирует по дате создания в обратном порядке (новые первыми)
   Future<void> loadChallenges() async {
     _isLoading = true;
     notifyListeners();
@@ -24,7 +34,7 @@ class ReadingChallengesProvider extends ChangeNotifier {
           .map((json) => ReadingChallenge.fromJson(json))
           .toList();
     } catch (e) {
-      print('Error loading reading challenges: $e');
+      print('Ошибка при загрузке_reading челленджей: $e');
       _challenges = [];
     } finally {
       _isLoading = false;
@@ -32,9 +42,13 @@ class ReadingChallengesProvider extends ChangeNotifier {
     }
   }
 
+  /// Присоединение пользователя к_reading челленджу
+  /// @param challengeId - ID_reading челленджа
+  /// @param userId - ID пользователя
+  /// @return true если успешно, false если произошла ошибка
   Future<bool> joinChallenge(String challengeId, String userId) async {
     try {
-      // Add user to participants
+      // Добавляем пользователя в участники
       await _client
           .from('reading_challenges')
           .update({
@@ -45,7 +59,7 @@ class ReadingChallengesProvider extends ChangeNotifier {
           })
           .eq('id', challengeId);
 
-      // Create user progress record
+      // Создаем запись о прогрессе пользователя
       await _client.from('user_challenge_progress').insert({
         'user_id': userId,
         'challenge_id': challengeId,
@@ -56,18 +70,23 @@ class ReadingChallengesProvider extends ChangeNotifier {
 
       return true;
     } catch (e) {
-      print('Error joining challenge: $e');
+      print('Ошибка при присоединении к_reading челленджу: $e');
       return false;
     }
   }
 
+  /// Обновление прогресса пользователя в_reading челлендже
+  /// @param challengeId - ID_reading челленджа
+  /// @param userId - ID пользователя
+  /// @param bookId - ID книги, которую пользователь завершил
+  /// @return true если успешно, false если произошла ошибка
   Future<bool> updateProgress(
     String challengeId,
     String userId,
     String bookId,
   ) async {
     try {
-      // Update user's progress in the challenge
+      // Получаем текущий прогресс пользователя в_reading челлендже
       final response = await _client
           .from('user_challenge_progress')
           .select()
@@ -77,7 +96,7 @@ class ReadingChallengesProvider extends ChangeNotifier {
 
       final currentProgress = UserChallengeProgress.fromJson(response);
 
-      // Check if book is already marked as completed
+      // Проверяем, не завершена ли уже эта книга
       if (!currentProgress.booksCompleted.contains(bookId)) {
         final updatedProgress = currentProgress.copyWith(
           booksRead: currentProgress.booksRead + 1,
@@ -94,11 +113,19 @@ class ReadingChallengesProvider extends ChangeNotifier {
 
       return true;
     } catch (e) {
-      print('Error updating challenge progress: $e');
+      print('Ошибка при обновлении прогресса в_reading челлендже: $e');
       return false;
     }
   }
 
+  /// Создание нового_reading челленджа
+  /// @param title - название_reading челленджа
+  /// @param description - описание
+  /// @param bookIds - список ID книг для чтения
+  /// @param targetBooks - целевое количество книг для завершения
+  /// @param bonusPoints - бонусные баллы за завершение
+  /// @param creatorId - ID создателя_reading челленджа
+  /// @return true если успешно, false если произошла ошибка
   Future<bool> createChallenge({
     required String title,
     required String description,
@@ -122,11 +149,14 @@ class ReadingChallengesProvider extends ChangeNotifier {
       await _client.from('reading_challenges').insert(newChallenge);
       return true;
     } catch (e) {
-      print('Error creating challenge: $e');
+      print('Ошибка при создании_reading челленджа: $e');
       return false;
     }
   }
 
+  /// Получение_reading челленджа по ID
+  /// @param challengeId - ID_reading челленджа для получения
+  /// @return ReadingChallenge если найден, null если не найден или произошла ошибка
   Future<ReadingChallenge?> getChallengeById(String challengeId) async {
     try {
       final response = await _client
@@ -137,11 +167,15 @@ class ReadingChallengesProvider extends ChangeNotifier {
 
       return ReadingChallenge.fromJson(response);
     } catch (e) {
-      print('Error getting challenge: $e');
+      print('Ошибка при получении_reading челленджа: $e');
       return null;
     }
   }
 
+  /// Получение прогресса пользователя в_reading челлендже
+  /// @param challengeId - ID_reading челленджа
+  /// @param userId - ID пользователя
+  /// @return UserChallengeProgress если найден, null если не найден или произошла ошибка
   Future<UserChallengeProgress?> getUserProgress(
     String challengeId,
     String userId,
@@ -156,7 +190,7 @@ class ReadingChallengesProvider extends ChangeNotifier {
 
       return UserChallengeProgress.fromJson(response);
     } catch (e) {
-      print('Error getting user progress: $e');
+      print('Ошибка при получении прогресса пользователя: $e');
       return null;
     }
   }
