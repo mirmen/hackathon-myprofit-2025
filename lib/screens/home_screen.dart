@@ -153,56 +153,65 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Consumer<CartProvider>(
               builder: (context, cartProvider, child) {
-                return Container(
-                  margin: EdgeInsets.only(right: _spacing(context, 2)),
-                  child: Stack(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(_spacing(context, 1.5)),
-                        decoration: BoxDecoration(
-                          color: AppColors.surface,
-                          borderRadius: BorderRadius.circular(
-                            _borderRadius(context, 3),
-                          ),
-                          border: Border.all(
-                            color: AppColors.divider,
-                            width: 0.5,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.04),
-                              blurRadius: _spacing(context, 1),
-                              offset: const Offset(0, 2),
+                return InkWell(
+                  onTap: () {
+                    // Navigate to cart screen
+                    Navigator.pushNamed(context, '/cart');
+                  },
+                  borderRadius: BorderRadius.circular(
+                    _borderRadius(context, 3),
+                  ),
+                  child: Container(
+                    margin: EdgeInsets.only(right: _spacing(context, 2)),
+                    child: Stack(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(_spacing(context, 1.5)),
+                          decoration: BoxDecoration(
+                            color: AppColors.surface,
+                            borderRadius: BorderRadius.circular(
+                              _borderRadius(context, 3),
                             ),
-                          ],
-                        ),
-                        child: Icon(
-                          Icons.shopping_bag_outlined,
-                          color: AppColors.onSurface,
-                          size: _iconSize(context, 2),
-                        ),
-                      ),
-                      if (cartProvider.itemCount > 0)
-                        Positioned(
-                          right: 0,
-                          top: 0,
-                          child: Container(
-                            padding: EdgeInsets.all(_spacing(context, 0.8)),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary,
-                              shape: BoxShape.circle,
+                            border: Border.all(
+                              color: AppColors.divider,
+                              width: 0.5,
                             ),
-                            child: Text(
-                              '${cartProvider.itemCount}',
-                              style: GoogleFonts.montserrat(
-                                fontSize: _fontSize(context, 1),
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.04),
+                                blurRadius: _spacing(context, 1),
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.shopping_bag_outlined,
+                            color: AppColors.onSurface,
+                            size: _iconSize(context, 2),
+                          ),
+                        ),
+                        if (cartProvider.itemCount > 0)
+                          Positioned(
+                            right: 0,
+                            top: 0,
+                            child: Container(
+                              padding: EdgeInsets.all(_spacing(context, 0.8)),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Text(
+                                '${cartProvider.itemCount}',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: _fontSize(context, 1),
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               },

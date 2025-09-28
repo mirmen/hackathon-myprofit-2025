@@ -45,9 +45,7 @@ class CartProvider extends ChangeNotifier {
 
     final wasLoading = _isLoading;
     _isLoading = true;
-    if (!wasLoading) {
-      notifyListeners();
-    }
+    bool shouldNotify = !wasLoading;
 
     try {
       final userId = _client.auth.currentUser!.id;
@@ -62,12 +60,13 @@ class CartProvider extends ChangeNotifier {
       bool itemsChanged = !const ListEquality().equals(_cartItems, newItems);
       if (itemsChanged) {
         _cartItems = newItems;
+        shouldNotify = true;
       }
 
       _isLoading = false;
 
       // Уведомляем слушателей только если состояние изменилось
-      if (wasLoading || itemsChanged) {
+      if (shouldNotify) {
         notifyListeners();
       }
     } catch (e) {
@@ -75,11 +74,12 @@ class CartProvider extends ChangeNotifier {
       bool hadItems = _cartItems.isNotEmpty;
       if (hadItems) {
         _cartItems = [];
+        shouldNotify = true;
       }
       _isLoading = false;
 
       // Уведомляем только если было изменение
-      if (wasLoading || hadItems) {
+      if (shouldNotify) {
         notifyListeners();
       }
     }
@@ -109,10 +109,8 @@ class CartProvider extends ChangeNotifier {
       }
       // Перезагружаем корзину после аутентификации
       await loadCart();
+      return true;
     }
-
-    _isLoading = true;
-    notifyListeners();
 
     try {
       final userId = _client.auth.currentUser!.id;
@@ -124,6 +122,9 @@ class CartProvider extends ChangeNotifier {
           .eq('product_id', product.id)
           .eq('selected_option', selectedOption)
           .maybeSingle();
+
+      _isLoading = true;
+      notifyListeners();
 
       if (existingResponse != null) {
         // Если товар уже есть, увеличиваем количество
@@ -152,7 +153,10 @@ class CartProvider extends ChangeNotifier {
       return false;
     } finally {
       _isLoading = false;
-      notifyListeners();
+      // Только уведомляем, если состояние загрузки изменилось
+      if (_isLoading != false) {
+        notifyListeners();
+      }
     }
   }
 
@@ -165,10 +169,10 @@ class CartProvider extends ChangeNotifier {
       return false;
     }
 
-    _isLoading = true;
-    notifyListeners();
-
     try {
+      _isLoading = true;
+      notifyListeners();
+
       await _client.from('cart_items').delete().eq('id', itemId);
       await loadCart();
       return true;
@@ -177,7 +181,10 @@ class CartProvider extends ChangeNotifier {
       return false;
     } finally {
       _isLoading = false;
-      notifyListeners();
+      // Только уведомляем, если состояние загрузки изменилось
+      if (_isLoading != false) {
+        notifyListeners();
+      }
     }
   }
 
@@ -191,19 +198,28 @@ class CartProvider extends ChangeNotifier {
       return false;
     }
 
-    _isLoading = true;
-    notifyListeners();
+    // Если количество <= 0, удаляем товар из корзины
+    if (newQuantity <= 0) {
+      return await removeFromCart(itemId);
+    }
 
     try {
-      // Если количество <= 0, удаляем товар из корзины
-      if (newQuantity <= 0) {
-        return await removeFromCart(itemId);
+      // Проверяем, изменилось ли количество
+      final itemIndex = _cartItems.indexWhere((item) => item.id == itemId);
+      if (itemIndex != -1 && _cartItems[itemIndex].quantity == newQuantity) {
+        // Количество не изменилось, не нужно обновлять
+        return true;
       }
+
+      _isLoading = true;
+      notifyListeners();
+
       // Обновляем количество товара
       await _client
           .from('cart_items')
           .update({'quantity': newQuantity})
           .eq('id', itemId);
+
       await loadCart();
       return true;
     } catch (e) {
@@ -211,7 +227,10 @@ class CartProvider extends ChangeNotifier {
       return false;
     } finally {
       _isLoading = false;
-      notifyListeners();
+      // Только уведомляем, если состояние загрузки изменилось
+      if (_isLoading != false) {
+        notifyListeners();
+      }
     }
   }
 
