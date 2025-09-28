@@ -1,4 +1,3 @@
-// app_theme.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../utils/app_utils.dart';
@@ -15,6 +14,28 @@ class AppColors {
   static const Color warning = Color(0xFFFFB74D);
   static const Color textLight = Color(0xFF757575);
   static const Color divider = Color(0xFFE0E0E0);
+}
+
+/// Centralized spacing constants for consistent UI spacing
+class AppSpacing {
+  static const double extraSmall = 4.0;
+  static const double small = 8.0;
+  static const double medium = 16.0;
+  static const double large = 24.0;
+  static const double extraLarge = 32.0;
+  static const double huge = 48.0;
+
+  /// Responsive spacing based on screen size
+  static double responsive(BuildContext context, double baseSize) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    if (screenWidth < 360) {
+      return baseSize * 0.8; // Smaller screens get tighter spacing
+    } else if (screenWidth > 768) {
+      return baseSize * 1.2; // Larger screens get looser spacing
+    }
+    return baseSize; // Standard screens get base spacing
+  }
 }
 
 ThemeData getAppTheme() {
@@ -63,7 +84,7 @@ ThemeData getAppTheme() {
 TextTheme _buildResponsiveTextTheme() {
   return TextTheme(
     displayLarge: GoogleFonts.montserrat(
-      fontSize: 32, // Будет масштабироваться адаптивно
+      fontSize: 32, // Will be scaled responsively
       fontWeight: FontWeight.w800,
       color: AppColors.onSurface,
       letterSpacing: -0.5,
@@ -153,12 +174,9 @@ ElevatedButtonThemeData _buildResponsiveElevatedButtonTheme() {
       elevation: 0,
       shadowColor: Colors.transparent,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      padding: EdgeInsets.symmetric(
-        horizontal: 24,
-        vertical: 16,
-      ), // Будет обработано в виджетах
+      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       textStyle: GoogleFonts.montserrat(
-        fontSize: 14, // Будет масштабировано в виджетах
+        fontSize: 14,
         fontWeight: FontWeight.w600,
         letterSpacing: 0.5,
       ),
@@ -227,7 +245,7 @@ AppBarTheme _buildResponsiveAppBarTheme() {
     foregroundColor: AppColors.onSurface,
     elevation: 0,
     centerTitle: false,
-    titleSpacing: 20, // Будет масштабировано в виджетах
+    titleSpacing: 20,
     titleTextStyle: GoogleFonts.montserrat(
       fontSize: 20,
       fontWeight: FontWeight.w700,

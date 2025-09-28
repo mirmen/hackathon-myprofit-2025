@@ -8,6 +8,7 @@ import '../utils/app_utils.dart';
 import '../utils/cached_image_widget.dart';
 import '../theme/app_theme.dart';
 import 'reading_challenges_screen.dart';
+import 'club_detail_screen.dart';
 
 class ClubsScreen extends StatefulWidget {
   @override
@@ -29,9 +30,9 @@ class _ClubsScreenState extends State<ClubsScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         title: Text(
-          'Клубы',
+          'Сообщества',
           style: GoogleFonts.montserrat(
-            fontSize: 24,
+            fontSize: ResponsiveUtils.responsiveFontSize(context, 24),
             fontWeight: FontWeight.w700,
             color: AppColors.onSurface,
           ),
@@ -39,6 +40,12 @@ class _ClubsScreenState extends State<ClubsScreen> {
         backgroundColor: AppColors.background,
         elevation: 0,
         centerTitle: false,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search, color: AppColors.onSurface),
+            onPressed: () {}, // TODO: Implement search functionality
+          ),
+        ],
       ),
       body: Consumer<ClubsProvider>(
         builder: (context, clubsProvider, child) {
@@ -82,21 +89,25 @@ class _ClubsScreenState extends State<ClubsScreen> {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(
+          AppSpacing.responsive(context, AppSpacing.small),
+        ),
         border: Border.all(color: AppColors.divider),
       ),
-      padding: EdgeInsets.all(16),
+      padding: EdgeInsets.all(
+        AppSpacing.responsive(context, AppSpacing.medium),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             title,
             style: GoogleFonts.montserrat(
-              fontSize: 16,
+              fontSize: ResponsiveUtils.responsiveFontSize(context, 16),
               fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(height: 8),
+          SizedBox(height: AppSpacing.responsive(context, AppSpacing.small)),
           Row(
             children: [
               Expanded(
@@ -106,11 +117,13 @@ class _ClubsScreenState extends State<ClubsScreen> {
                   valueColor: AlwaysStoppedAnimation<Color>(color),
                 ),
               ),
-              SizedBox(width: 12),
+              SizedBox(
+                width: AppSpacing.responsive(context, AppSpacing.medium),
+              ),
               Text(
                 progressText,
                 style: GoogleFonts.montserrat(
-                  fontSize: 12,
+                  fontSize: ResponsiveUtils.responsiveFontSize(context, 12),
                   color: Colors.grey[600],
                 ),
               ),
@@ -123,12 +136,15 @@ class _ClubsScreenState extends State<ClubsScreen> {
 
   Widget _buildFilterSection(ClubsProvider clubsProvider) {
     return Container(
-      height: 60,
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      height: ResponsiveUtils.responsiveSize(context, 60),
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSpacing.responsive(context, AppSpacing.large),
+        vertical: AppSpacing.responsive(context, AppSpacing.small),
+      ),
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
-          _buildFilterChip('all', 'Все', clubsProvider),
+          _buildFilterChip('all', 'Все сообщества', clubsProvider),
           _buildFilterChip('book', 'Книжные', clubsProvider),
           _buildFilterChip('coffee', 'Кофейные', clubsProvider),
         ],
@@ -144,39 +160,35 @@ class _ClubsScreenState extends State<ClubsScreen> {
     final isSelected = clubsProvider.selectedType == type;
 
     return Padding(
-      padding: EdgeInsets.only(right: 12),
+      padding: EdgeInsets.only(
+        right: AppSpacing.responsive(context, AppSpacing.medium),
+      ),
       child: FilterChip(
-        label: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              _getIconForType(type),
-              size: 16,
-              color: isSelected ? AppColors.primary : AppColors.textLight,
-            ),
-            SizedBox(width: 6),
-            Text(
-              label,
-              style: GoogleFonts.montserrat(
-                fontSize: 14,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                color: isSelected ? AppColors.primary : AppColors.textLight,
-              ),
-            ),
-          ],
+        label: Text(
+          label,
+          style: GoogleFonts.montserrat(
+            fontSize: ResponsiveUtils.responsiveFontSize(context, 14),
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            color: isSelected ? AppColors.primary : AppColors.textLight,
+          ),
         ),
         selected: isSelected,
         onSelected: (_) => clubsProvider.setType(type),
         selectedColor: AppColors.primary.withOpacity(0.15),
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(
+            AppSpacing.responsive(context, AppSpacing.large),
+          ),
           side: BorderSide(
             color: isSelected ? AppColors.primary : AppColors.divider,
             width: 1.5,
           ),
         ),
-        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: EdgeInsets.symmetric(
+          horizontal: AppSpacing.responsive(context, AppSpacing.medium),
+          vertical: AppSpacing.responsive(context, AppSpacing.small),
+        ),
       ),
     );
   }
@@ -197,7 +209,10 @@ class _ClubsScreenState extends State<ClubsScreen> {
       onRefresh: () => clubsProvider.loadClubs(),
       color: AppColors.primary,
       child: ListView.builder(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        padding: EdgeInsets.symmetric(
+          horizontal: AppSpacing.responsive(context, AppSpacing.large),
+          vertical: AppSpacing.responsive(context, AppSpacing.medium),
+        ),
         itemCount: clubsProvider.clubs.length,
         itemBuilder: (context, index) {
           final club = clubsProvider.clubs[index];
@@ -213,42 +228,44 @@ class _ClubsScreenState extends State<ClubsScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: EdgeInsets.all(24),
+            padding: EdgeInsets.all(
+              AppSpacing.responsive(context, AppSpacing.large),
+            ),
             decoration: BoxDecoration(
               color: AppColors.primary.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.group_rounded,
-              size: 64,
+              size: ResponsiveUtils.responsiveIconSize(context, 64),
               color: AppColors.primary,
             ),
           ),
-          SizedBox(height: 24),
+          SizedBox(height: AppSpacing.responsive(context, AppSpacing.large)),
           Text(
-            'Клубы не найдены',
+            'Сообщества не найдены',
             style: GoogleFonts.montserrat(
-              fontSize: 22,
+              fontSize: ResponsiveUtils.responsiveFontSize(context, 22),
               fontWeight: FontWeight.w700,
               color: AppColors.onSurface,
             ),
           ),
-          SizedBox(height: 12),
+          SizedBox(height: AppSpacing.responsive(context, AppSpacing.small)),
           Text(
             'Попробуйте изменить фильтры поиска',
             style: GoogleFonts.montserrat(
-              fontSize: 16,
+              fontSize: ResponsiveUtils.responsiveFontSize(context, 16),
               fontWeight: FontWeight.w400,
               color: AppColors.textLight,
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 24),
+          SizedBox(height: AppSpacing.responsive(context, AppSpacing.large)),
           OutlinedButton(
             onPressed: () {
               context.read<ClubsProvider>().setType('all');
             },
-            child: Text('Показать все клубы'),
+            child: Text('Показать все сообщества'),
           ),
         ],
       ),
@@ -310,13 +327,13 @@ class _ClubCardState extends State<ClubCard> {
         AppUtils.showSuccessSnackBar(
           context,
           _isJoined
-              ? 'Вы присоединились к клубу "${widget.club.title}"'
-              : 'Вы покинули клуб "${widget.club.title}"',
+              ? 'Вы присоединились к сообществу "${widget.club.title}"'
+              : 'Вы покинули сообщество "${widget.club.title}"',
         );
       } else {
         AppUtils.showErrorSnackBar(
           context,
-          'Ошибка при ${_isJoined ? 'покидании' : 'присоединении к'} клубу',
+          'Ошибка при ${_isJoined ? 'покидании' : 'присоединении к'} сообществу',
         );
       }
 
@@ -329,212 +346,368 @@ class _ClubCardState extends State<ClubCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 16),
+      margin: EdgeInsets.only(
+        bottom: AppSpacing.responsive(context, AppSpacing.medium),
+      ),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(
+          AppSpacing.responsive(context, AppSpacing.small),
+        ),
         border: Border.all(color: AppColors.divider, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildHeader(),
-          SizedBox(height: 12),
-          _buildDescription(),
-          SizedBox(height: 16),
-          _buildStatsRow(),
-          SizedBox(height: 16),
-          _buildActionButton(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      padding: EdgeInsets.all(16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Club image
           if (widget.club.imageUrl != null)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: CachedImageWidget(
-                imageUrl: widget.club.imageUrl!,
-                width: 70,
-                height: 70,
-              ),
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(
+                      AppSpacing.responsive(context, AppSpacing.small),
+                    ),
+                    topRight: Radius.circular(
+                      AppSpacing.responsive(context, AppSpacing.small),
+                    ),
+                  ),
+                  child: CachedImageWidget(
+                    imageUrl: widget.club.imageUrl!,
+                    width: double.infinity,
+                    height: ResponsiveUtils.responsiveSize(context, 140),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                if (_isJoined)
+                  Positioned(
+                    top: AppSpacing.responsive(context, AppSpacing.small),
+                    right: AppSpacing.responsive(context, AppSpacing.small),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: AppSpacing.responsive(
+                          context,
+                          AppSpacing.medium,
+                        ),
+                        vertical: AppSpacing.responsive(
+                          context,
+                          AppSpacing.extraSmall,
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        color: _getClubTypeColor(),
+                        borderRadius: BorderRadius.circular(
+                          AppSpacing.responsive(context, AppSpacing.large),
+                        ),
+                      ),
+                      child: Text(
+                        'Участник',
+                        style: GoogleFonts.montserrat(
+                          fontSize: ResponsiveUtils.responsiveFontSize(
+                            context,
+                            12,
+                          ),
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             )
           else
             Container(
-              width: 70,
-              height: 70,
+              height: ResponsiveUtils.responsiveSize(context, 140),
+              width: double.infinity,
               decoration: BoxDecoration(
                 color: _getClubTypeColor().withOpacity(0.15),
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(
+                    AppSpacing.responsive(context, AppSpacing.small),
+                  ),
+                  topRight: Radius.circular(
+                    AppSpacing.responsive(context, AppSpacing.small),
+                  ),
+                ),
               ),
               child: Icon(
                 _getIconForClubType(),
                 color: _getClubTypeColor(),
-                size: 32,
+                size: ResponsiveUtils.responsiveIconSize(context, 48),
               ),
             ),
-          SizedBox(width: 16),
-
-          // Club info
-          Expanded(
+          Padding(
+            padding: EdgeInsets.all(
+              AppSpacing.responsive(context, AppSpacing.medium),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Club title - full title visible
                 Text(
                   widget.club.title,
                   style: GoogleFonts.montserrat(
-                    fontSize: 18,
+                    fontSize: ResponsiveUtils.responsiveFontSize(context, 18),
                     fontWeight: FontWeight.w600,
                     color: AppColors.onSurface,
                   ),
                 ),
-                SizedBox(height: 8),
-
-                // Members and online info
+                SizedBox(
+                  height: AppSpacing.responsive(context, AppSpacing.small),
+                ),
+                Text(
+                  widget.club.description,
+                  style: GoogleFonts.montserrat(
+                    fontSize: ResponsiveUtils.responsiveFontSize(context, 14),
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.onSurface,
+                    height: 1.5,
+                  ),
+                ),
+                SizedBox(
+                  height: AppSpacing.responsive(context, AppSpacing.medium),
+                ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.people_outline,
-                      size: 16,
-                      color: AppColors.textLight,
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.people_outline,
+                          size: ResponsiveUtils.responsiveIconSize(context, 16),
+                          color: AppColors.textLight,
+                        ),
+                        SizedBox(
+                          width: AppSpacing.responsive(
+                            context,
+                            AppSpacing.extraSmall,
+                          ),
+                        ),
+                        Text(
+                          '${widget.club.membersCount}',
+                          style: GoogleFonts.montserrat(
+                            fontSize: ResponsiveUtils.responsiveFontSize(
+                              context,
+                              14,
+                            ),
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.textLight,
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(width: 6),
-                    Text(
-                      '${widget.club.membersCount} участников',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.textLight,
-                      ),
+                    SizedBox(
+                      width: AppSpacing.responsive(context, AppSpacing.large),
                     ),
-                    SizedBox(width: 16),
-                    Icon(Icons.circle, size: 10, color: AppColors.success),
-                    SizedBox(width: 6),
-                    Text(
-                      '${widget.club.onlineCount} онлайн',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: AppColors.textLight,
-                      ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.comment_outlined,
+                          size: ResponsiveUtils.responsiveIconSize(context, 16),
+                          color: AppColors.textLight,
+                        ),
+                        SizedBox(
+                          width: AppSpacing.responsive(
+                            context,
+                            AppSpacing.extraSmall,
+                          ),
+                        ),
+                        Text(
+                          '56', // TODO: Replace with widget.club.commentsCount if added to model
+                          style: GoogleFonts.montserrat(
+                            fontSize: ResponsiveUtils.responsiveFontSize(
+                              context,
+                              14,
+                            ),
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.textLight,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      width: AppSpacing.responsive(context, AppSpacing.large),
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.calendar_today,
+                          size: ResponsiveUtils.responsiveIconSize(context, 16),
+                          color: AppColors.textLight,
+                        ),
+                        SizedBox(
+                          width: AppSpacing.responsive(
+                            context,
+                            AppSpacing.extraSmall,
+                          ),
+                        ),
+                        Text(
+                          '7', // TODO: Replace with widget.club.eventsCount if added to model
+                          style: GoogleFonts.montserrat(
+                            fontSize: ResponsiveUtils.responsiveFontSize(
+                              context,
+                              14,
+                            ),
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.textLight,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      width: AppSpacing.responsive(context, AppSpacing.large),
+                    ),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.circle,
+                          size: ResponsiveUtils.responsiveIconSize(context, 10),
+                          color: AppColors.success,
+                        ),
+                        SizedBox(
+                          width: AppSpacing.responsive(
+                            context,
+                            AppSpacing.extraSmall,
+                          ),
+                        ),
+                        Text(
+                          '${widget.club.onlineCount} онлайн',
+                          style: GoogleFonts.montserrat(
+                            fontSize: ResponsiveUtils.responsiveFontSize(
+                              context,
+                              14,
+                            ),
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.textLight,
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
+                SizedBox(
+                  height: AppSpacing.responsive(context, AppSpacing.small),
+                ),
+                Text(
+                  '2 часа назад: Мастер-класс по латте-арту', // TODO: Replace with widget.club.lastActivity if added to model
+                  style: GoogleFonts.montserrat(
+                    fontSize: ResponsiveUtils.responsiveFontSize(context, 13),
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textLight,
+                  ),
+                ),
+                SizedBox(
+                  height: AppSpacing.responsive(context, AppSpacing.medium),
+                ),
+                if (_isLoading)
+                  Center(
+                    child: SizedBox(
+                      width: ResponsiveUtils.responsiveSize(context, 20),
+                      height: ResponsiveUtils.responsiveSize(context, 20),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  )
+                else if (_isJoined)
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FilledButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ClubDetailScreen(club: widget.club),
+                              ),
+                            );
+                          },
+                          child: Text('Подробнее'),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: Colors.grey[200],
+                            foregroundColor: AppColors.onSurface,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                AppSpacing.responsive(
+                                  context,
+                                  AppSpacing.small,
+                                ),
+                              ),
+                            ),
+                            elevation: 0,
+                            padding: EdgeInsets.symmetric(
+                              vertical: AppSpacing.responsive(
+                                context,
+                                AppSpacing.small,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: AppSpacing.responsive(
+                          context,
+                          AppSpacing.medium,
+                        ),
+                      ),
+                      Expanded(
+                        child: FilledButton(
+                          onPressed: _toggleMembership,
+                          child: Text('Выйти'),
+                          style: FilledButton.styleFrom(
+                            backgroundColor: Colors.red, // Changed to red
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                AppSpacing.responsive(
+                                  context,
+                                  AppSpacing.small,
+                                ),
+                              ),
+                            ),
+                            elevation: 0,
+                            padding: EdgeInsets.symmetric(
+                              vertical: AppSpacing.responsive(
+                                context,
+                                AppSpacing.small,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                else
+                  FilledButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ClubDetailScreen(club: widget.club),
+                        ),
+                      );
+                    },
+                    child: Text('Присоединиться'),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          AppSpacing.responsive(context, AppSpacing.small),
+                        ),
+                      ),
+                      elevation: 0,
+                      minimumSize: Size(
+                        double.infinity,
+                        ResponsiveUtils.responsiveSize(context, 44),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildDescription() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Text(
-        widget.club.description,
-        style: GoogleFonts.montserrat(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: AppColors.onSurface,
-          height: 1.5,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatsRow() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // Club type badge
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: _getClubTypeColor().withOpacity(0.1),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Text(
-              _getTypeLabel(widget.club.type),
-              style: GoogleFonts.montserrat(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: _getClubTypeColor(),
-              ),
-            ),
-          ),
-
-          // Online indicator
-          Row(
-            children: [
-              Icon(Icons.circle, size: 10, color: AppColors.success),
-              SizedBox(width: 6),
-              Text(
-                '${widget.club.onlineCount} онлайн',
-                style: GoogleFonts.montserrat(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.success,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionButton() {
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: SizedBox(
-        width: double.infinity,
-        height: 44,
-        child: _isLoading
-            ? Center(
-                child: SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: AppColors.primary,
-                  ),
-                ),
-              )
-            : OutlinedButton(
-                onPressed: _toggleMembership,
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(
-                    color: _isJoined ? AppColors.primary : AppColors.primary,
-                    width: 1.5,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  padding: EdgeInsets.zero,
-                ),
-                child: Text(
-                  _isJoined ? 'Покинуть клуб' : 'Присоединиться',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: _isJoined ? AppColors.primary : AppColors.primary,
-                  ),
-                ),
-              ),
       ),
     );
   }

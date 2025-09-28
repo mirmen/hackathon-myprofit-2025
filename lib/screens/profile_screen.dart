@@ -1,3 +1,7 @@
+import 'package:coffeebook/screens/my_books_screen.dart';
+import 'package:coffeebook/screens/quotes_screen.dart';
+import 'package:coffeebook/screens/help_support_screen.dart';
+import 'package:coffeebook/screens/about_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +12,8 @@ import '../providers/auth_provider.dart';
 import '../providers/user_provider.dart';
 import '../providers/cart_provider.dart';
 import '../providers/favorites_provider.dart';
+import '../theme/app_theme.dart';
+import '../utils/app_utils.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -128,7 +134,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           constraints: BoxConstraints(maxWidth: 400),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(
+              AppSpacing.responsive(context, AppSpacing.large),
+            ),
           ),
           padding: EdgeInsets.all(padding * 1.5),
           child: Column(
@@ -137,9 +145,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Text(
                 'Ваш QR-код',
                 style: GoogleFonts.manrope(
-                  fontSize: isSmallScreen ? 18 : 20, // Используем isSmallScreen
+                  fontSize: ResponsiveUtils.responsiveFontSize(
+                    context,
+                    isSmallScreen ? 18 : 20,
+                  ), // Используем isSmallScreen
                   fontWeight: FontWeight.w700,
-                  color: const Color(0xFF2E2E2E),
+                  color: AppColors.onSurface,
                 ),
               ),
               SizedBox(height: padding),
@@ -148,10 +159,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 padding: EdgeInsets.all(padding),
                 decoration: BoxDecoration(
                   color: Colors.grey[50],
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: const Color(0xFF8C6A4B).withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(
+                    AppSpacing.responsive(context, AppSpacing.medium),
                   ),
+                  border: Border.all(color: AppColors.primary.withOpacity(0.3)),
                 ),
                 child: SizedBox(
                   width: qrSize,
@@ -159,7 +170,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: PrettyQrView.data(
                     data: jsonData,
                     decoration: PrettyQrDecoration(
-                      shape: PrettyQrSmoothSymbol(color: Color(0xFF8C6A4B)),
+                      shape: PrettyQrSmoothSymbol(color: AppColors.primary),
                     ),
                   ),
                 ),
@@ -169,9 +180,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Text(
                 '$bonusPoints бонусных баллов',
                 style: GoogleFonts.manrope(
-                  fontSize: isSmallScreen ? 14 : 16, // Используем isSmallScreen
+                  fontSize: ResponsiveUtils.responsiveFontSize(
+                    context,
+                    isSmallScreen ? 14 : 16,
+                  ), // Используем isSmallScreen
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xFF8C6A4B),
+                  color: AppColors.primary,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -179,17 +193,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Text(
                 name,
                 style: GoogleFonts.manrope(
-                  fontSize: isSmallScreen ? 12 : 14, // Используем isSmallScreen
+                  fontSize: ResponsiveUtils.responsiveFontSize(
+                    context,
+                    isSmallScreen ? 12 : 14,
+                  ), // Используем isSmallScreen
                   fontWeight: FontWeight.w500,
-                  color: const Color(0xFF2E2E2E),
+                  color: AppColors.onSurface,
                 ),
                 textAlign: TextAlign.center,
               ),
               Text(
                 email,
                 style: GoogleFonts.manrope(
-                  fontSize: isSmallScreen ? 10 : 12, // Используем isSmallScreen
-                  color: const Color(0xFF2E2E2E).withOpacity(0.7),
+                  fontSize: ResponsiveUtils.responsiveFontSize(
+                    context,
+                    isSmallScreen ? 10 : 12,
+                  ), // Используем isSmallScreen
+                  color: AppColors.onSurface.withOpacity(0.7),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -197,8 +217,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Text(
                 'Участник с ${_formatDate(memberSince)}',
                 style: GoogleFonts.manrope(
-                  fontSize: isSmallScreen ? 9 : 11, // Используем isSmallScreen
-                  color: const Color(0xFF2E2E2E).withOpacity(0.6),
+                  fontSize: ResponsiveUtils.responsiveFontSize(
+                    context,
+                    isSmallScreen ? 9 : 11,
+                  ), // Используем isSmallScreen
+                  color: AppColors.onSurface.withOpacity(0.6),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -208,19 +231,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: ElevatedButton(
                   onPressed: () => Navigator.pop(context),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF8C6A4B),
+                    backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,
-                    minimumSize: Size.fromHeight(44),
+                    minimumSize: Size.fromHeight(
+                      ResponsiveUtils.getButtonHeight(context, size: 'medium'),
+                    ),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(
+                        AppSpacing.responsive(context, AppSpacing.small),
+                      ),
                     ),
                   ),
                   child: Text(
                     'Закрыть',
                     style: GoogleFonts.manrope(
-                      fontSize: isSmallScreen
-                          ? 14
-                          : 16, // Используем isSmallScreen
+                      fontSize: ResponsiveUtils.responsiveFontSize(
+                        context,
+                        isSmallScreen ? 14 : 16,
+                      ), // Используем isSmallScreen
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -241,16 +269,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final isSmallScreen = width < 350;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F5F1),
+      backgroundColor: AppColors.background,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: const Color(0xFFFFFFFF),
+        backgroundColor: AppColors.surface,
         title: Text(
           'Профиль',
           style: GoogleFonts.manrope(
-            fontSize: isSmallScreen ? 16 : 18,
+            fontSize: ResponsiveUtils.responsiveFontSize(
+              context,
+              isSmallScreen ? 16 : 18,
+            ),
             fontWeight: FontWeight.w600,
-            color: const Color(0xFF2E2E2E),
+            color: AppColors.onSurface,
           ),
         ),
         centerTitle: true,
@@ -283,13 +314,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     // Профиль с аватаркой слева
                     Card(
-                      color: const Color(0xFFFFFFFF),
+                      color: AppColors.surface,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(
+                          AppSpacing.responsive(context, AppSpacing.medium),
+                        ),
                       ),
                       elevation: 1,
                       child: Padding(
-                        padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
+                        padding: EdgeInsets.all(
+                          isSmallScreen
+                              ? AppSpacing.responsive(
+                                  context,
+                                  AppSpacing.medium,
+                                )
+                              : AppSpacing.responsive(
+                                  context,
+                                  AppSpacing.large,
+                                ),
+                        ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -299,9 +342,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 final avatarUrl = _avatarUrlFor(user);
                                 return CircleAvatar(
                                   radius: isSmallScreen ? 32 : 40,
-                                  backgroundColor: const Color(
-                                    0xFF8C6A4B,
-                                  ).withOpacity(0.1),
+                                  backgroundColor: AppColors.primary
+                                      .withOpacity(0.1),
                                   backgroundImage: avatarUrl != null
                                       ? NetworkImage(avatarUrl)
                                       : null,
@@ -311,16 +353,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               ? user.name[0].toUpperCase()
                                               : 'U',
                                           style: GoogleFonts.manrope(
-                                            fontSize: isSmallScreen ? 20 : 28,
+                                            fontSize:
+                                                ResponsiveUtils.responsiveFontSize(
+                                                  context,
+                                                  isSmallScreen ? 20 : 28,
+                                                ),
                                             fontWeight: FontWeight.w600,
-                                            color: const Color(0xFF8C6A4B),
+                                            color: AppColors.primary,
                                           ),
                                         )
                                       : null,
                                 );
                               },
                             ),
-                            SizedBox(width: isSmallScreen ? 12 : 16),
+                            SizedBox(
+                              width: isSmallScreen
+                                  ? AppSpacing.responsive(
+                                      context,
+                                      AppSpacing.small,
+                                    )
+                                  : AppSpacing.responsive(
+                                      context,
+                                      AppSpacing.medium,
+                                    ),
+                            ),
 
                             // Информация о пользователе
                             Expanded(
@@ -330,20 +386,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   Text(
                                     user.name,
                                     style: GoogleFonts.manrope(
-                                      fontSize: isSmallScreen ? 16 : 20,
+                                      fontSize:
+                                          ResponsiveUtils.responsiveFontSize(
+                                            context,
+                                            isSmallScreen ? 16 : 20,
+                                          ),
                                       fontWeight: FontWeight.w700,
-                                      color: const Color(0xFF2E2E2E),
+                                      color: AppColors.onSurface,
                                     ),
                                   ),
                                   SizedBox(height: 2),
                                   Text(
                                     user.email,
                                     style: GoogleFonts.manrope(
-                                      fontSize: isSmallScreen ? 12 : 14,
+                                      fontSize:
+                                          ResponsiveUtils.responsiveFontSize(
+                                            context,
+                                            isSmallScreen ? 12 : 14,
+                                          ),
                                       fontWeight: FontWeight.w400,
-                                      color: const Color(
-                                        0xFF2E2E2E,
-                                      ).withOpacity(0.7),
+                                      color: AppColors.onSurface.withOpacity(
+                                        0.7,
+                                      ),
                                     ),
                                   ),
                                   SizedBox(height: 6),
@@ -363,51 +427,56 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               TextField(
                                                 controller: _statusController,
                                                 style: GoogleFonts.manrope(
-                                                  fontSize: isSmallScreen
-                                                      ? 12
-                                                      : 14,
+                                                  fontSize:
+                                                      ResponsiveUtils.responsiveFontSize(
+                                                        context,
+                                                        isSmallScreen ? 12 : 14,
+                                                      ),
                                                   fontWeight: FontWeight.w400,
-                                                  color: const Color(
-                                                    0xFF8C6A4B,
-                                                  ),
+                                                  color: AppColors.primary,
                                                 ),
                                                 decoration: InputDecoration(
                                                   hintText:
                                                       'Напишите свой статус...',
-                                                  hintStyle:
-                                                      GoogleFonts.manrope(
-                                                        fontSize: isSmallScreen
-                                                            ? 12
-                                                            : 14,
-                                                        color: const Color(
-                                                          0xFF2E2E2E,
-                                                        ).withOpacity(0.5),
-                                                      ),
+                                                  hintStyle: GoogleFonts.manrope(
+                                                    fontSize:
+                                                        ResponsiveUtils.responsiveFontSize(
+                                                          context,
+                                                          isSmallScreen
+                                                              ? 12
+                                                              : 14,
+                                                        ),
+                                                    color: AppColors.onSurface
+                                                        .withOpacity(0.5),
+                                                  ),
                                                   border: OutlineInputBorder(
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                          8,
+                                                          AppSpacing.responsive(
+                                                            context,
+                                                            AppSpacing.small,
+                                                          ),
                                                         ),
                                                     borderSide:
                                                         const BorderSide(
-                                                          color: Color(
-                                                            0xFF8C6A4B,
-                                                          ),
+                                                          color:
+                                                              AppColors.primary,
                                                         ),
                                                   ),
-                                                  focusedBorder:
-                                                      OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                              8,
-                                                            ),
-                                                        borderSide:
-                                                            const BorderSide(
-                                                              color: Color(
-                                                                0xFF8C6A4B,
-                                                              ),
-                                                            ),
-                                                      ),
+                                                  focusedBorder: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          AppSpacing.responsive(
+                                                            context,
+                                                            AppSpacing.small,
+                                                          ),
+                                                        ),
+                                                    borderSide:
+                                                        const BorderSide(
+                                                          color:
+                                                              AppColors.primary,
+                                                        ),
+                                                  ),
                                                   contentPadding:
                                                       const EdgeInsets.symmetric(
                                                         horizontal: 12,
@@ -423,66 +492,96 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                     onPressed: _saveStatus,
                                                     style: ElevatedButton.styleFrom(
                                                       backgroundColor:
-                                                          const Color(
-                                                            0xFF8C6A4B,
-                                                          ),
+                                                          AppColors.primary,
                                                       foregroundColor:
                                                           Colors.white,
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                            horizontal:
-                                                                isSmallScreen
-                                                                ? 12
-                                                                : 16,
-                                                            vertical: 6,
-                                                          ),
+                                                      padding: EdgeInsets.symmetric(
+                                                        horizontal:
+                                                            isSmallScreen
+                                                            ? AppSpacing.responsive(
+                                                                context,
+                                                                AppSpacing
+                                                                    .small,
+                                                              )
+                                                            : AppSpacing.responsive(
+                                                                context,
+                                                                AppSpacing
+                                                                    .medium,
+                                                              ),
+                                                        vertical:
+                                                            AppSpacing.responsive(
+                                                              context,
+                                                              AppSpacing
+                                                                  .extraSmall,
+                                                            ),
+                                                      ),
                                                       shape: RoundedRectangleBorder(
                                                         borderRadius:
                                                             BorderRadius.circular(
-                                                              8,
+                                                              AppSpacing.responsive(
+                                                                context,
+                                                                AppSpacing
+                                                                    .small,
+                                                              ),
                                                             ),
                                                       ),
                                                     ),
                                                     child: Text(
                                                       'Сохранить',
-                                                      style:
-                                                          GoogleFonts.manrope(
-                                                            fontSize:
-                                                                isSmallScreen
-                                                                ? 10
-                                                                : 12,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                          ),
+                                                      style: GoogleFonts.manrope(
+                                                        fontSize:
+                                                            ResponsiveUtils.responsiveFontSize(
+                                                              context,
+                                                              isSmallScreen
+                                                                  ? 10
+                                                                  : 12,
+                                                            ),
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                      ),
                                                     ),
                                                   ),
                                                   SizedBox(width: 6),
                                                   TextButton(
                                                     onPressed: _cancelEditing,
                                                     style: TextButton.styleFrom(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                            horizontal:
-                                                                isSmallScreen
-                                                                ? 12
-                                                                : 16,
-                                                            vertical: 6,
-                                                          ),
+                                                      padding: EdgeInsets.symmetric(
+                                                        horizontal:
+                                                            isSmallScreen
+                                                            ? AppSpacing.responsive(
+                                                                context,
+                                                                AppSpacing
+                                                                    .small,
+                                                              )
+                                                            : AppSpacing.responsive(
+                                                                context,
+                                                                AppSpacing
+                                                                    .medium,
+                                                              ),
+                                                        vertical:
+                                                            AppSpacing.responsive(
+                                                              context,
+                                                              AppSpacing
+                                                                  .extraSmall,
+                                                            ),
+                                                      ),
                                                     ),
                                                     child: Text(
                                                       'Отмена',
-                                                      style:
-                                                          GoogleFonts.manrope(
-                                                            fontSize:
-                                                                isSmallScreen
-                                                                ? 10
-                                                                : 12,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: const Color(
-                                                              0xFF2E2E2E,
-                                                            ).withOpacity(0.6),
-                                                          ),
+                                                      style: GoogleFonts.manrope(
+                                                        fontSize:
+                                                            ResponsiveUtils.responsiveFontSize(
+                                                              context,
+                                                              isSmallScreen
+                                                                  ? 10
+                                                                  : 12,
+                                                            ),
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: AppColors
+                                                            .onSurface
+                                                            .withOpacity(0.6),
+                                                      ),
                                                     ),
                                                   ),
                                                 ],
@@ -495,13 +594,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 child: Text(
                                                   _userStatus,
                                                   style: GoogleFonts.manrope(
-                                                    fontSize: isSmallScreen
-                                                        ? 12
-                                                        : 14,
+                                                    fontSize:
+                                                        ResponsiveUtils.responsiveFontSize(
+                                                          context,
+                                                          isSmallScreen
+                                                              ? 12
+                                                              : 14,
+                                                        ),
                                                     fontWeight: FontWeight.w400,
-                                                    color: const Color(
-                                                      0xFF8C6A4B,
-                                                    ),
+                                                    color: AppColors.primary,
                                                     fontStyle: FontStyle.italic,
                                                   ),
                                                   maxLines: 2,
@@ -512,10 +613,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                               SizedBox(width: 6),
                                               Icon(
                                                 Icons.edit,
-                                                size: isSmallScreen ? 14 : 16,
-                                                color: const Color(
-                                                  0xFF2E2E2E,
-                                                ).withOpacity(0.5),
+                                                size:
+                                                    ResponsiveUtils.responsiveIconSize(
+                                                      context,
+                                                      isSmallScreen ? 14 : 16,
+                                                    ),
+                                                color: AppColors.onSurface
+                                                    .withOpacity(0.5),
                                               ),
                                             ],
                                           ),
@@ -542,15 +646,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Container(
                         height: isSmallScreen ? 160 : 190,
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
+                          gradient: LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [Color(0xFF8C6A4B), Color(0xFFCD9F68)],
+                            colors: [AppColors.primary, AppColors.secondary],
                           ),
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(
+                            AppSpacing.responsive(context, AppSpacing.medium),
+                          ),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF8C6A4B).withOpacity(0.3),
+                              color: AppColors.primary.withOpacity(0.3),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -586,7 +692,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                             // Контент карточки
                             Padding(
-                              padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
+                              padding: EdgeInsets.all(
+                                isSmallScreen
+                                    ? AppSpacing.responsive(
+                                        context,
+                                        AppSpacing.medium,
+                                      )
+                                    : AppSpacing.responsive(
+                                        context,
+                                        AppSpacing.large,
+                                      ),
+                              ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -597,7 +713,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       Text(
                                         'Бонусная карта',
                                         style: GoogleFonts.manrope(
-                                          fontSize: isSmallScreen ? 12 : 14,
+                                          fontSize:
+                                              ResponsiveUtils.responsiveFontSize(
+                                                context,
+                                                isSmallScreen ? 12 : 14,
+                                              ),
                                           fontWeight: FontWeight.w600,
                                           color: Colors.white,
                                         ),
@@ -605,7 +725,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       Icon(
                                         Icons.qr_code,
                                         color: Colors.white.withOpacity(0.8),
-                                        size: isSmallScreen ? 18 : 20,
+                                        size:
+                                            ResponsiveUtils.responsiveIconSize(
+                                              context,
+                                              isSmallScreen ? 18 : 20,
+                                            ),
                                       ),
                                     ],
                                   ),
@@ -637,7 +761,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           Text(
                                             'баллов',
                                             style: GoogleFonts.manrope(
-                                              fontSize: isSmallScreen ? 12 : 14,
+                                              fontSize:
+                                                  ResponsiveUtils.responsiveFontSize(
+                                                    context,
+                                                    isSmallScreen ? 12 : 14,
+                                                  ),
                                               fontWeight: FontWeight.w500,
                                               color: Colors.white.withOpacity(
                                                 0.9,
@@ -668,7 +796,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       Text(
                                         'До уровня: ${bonusPointsGoal - bonusPoints} баллов',
                                         style: GoogleFonts.manrope(
-                                          fontSize: isSmallScreen ? 8 : 10,
+                                          fontSize:
+                                              ResponsiveUtils.responsiveFontSize(
+                                                context,
+                                                isSmallScreen ? 8 : 10,
+                                              ),
                                           color: Colors.white.withOpacity(0.8),
                                         ),
                                       ),
@@ -676,7 +808,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       Text(
                                         'Участник с ${_formatDate(user.memberSince)}',
                                         style: GoogleFonts.manrope(
-                                          fontSize: isSmallScreen ? 8 : 10,
+                                          fontSize:
+                                              ResponsiveUtils.responsiveFontSize(
+                                                context,
+                                                isSmallScreen ? 8 : 10,
+                                              ),
                                           color: Colors.white.withOpacity(0.7),
                                         ),
                                       ),
@@ -694,15 +830,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     // Статистика серий
                     Card(
-                      color: const Color(0xFFFFFFFF),
+                      color: AppColors.surface,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(
+                          AppSpacing.responsive(context, AppSpacing.medium),
+                        ),
                       ),
                       elevation: 1,
                       child: Padding(
                         padding: EdgeInsets.symmetric(
-                          vertical: isSmallScreen ? 12 : 16,
-                          horizontal: 8,
+                          vertical: isSmallScreen
+                              ? AppSpacing.responsive(context, AppSpacing.small)
+                              : AppSpacing.responsive(
+                                  context,
+                                  AppSpacing.medium,
+                                ),
+                          horizontal: AppSpacing.responsive(
+                            context,
+                            AppSpacing.small,
+                          ),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -710,13 +856,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             _buildStatItem(
                               value: '$currentStreak',
                               title: 'Текущая серия',
-                              color: const Color(0xFF8C6A4B),
+                              color: AppColors.primary,
                               isSmallScreen: isSmallScreen,
                             ),
                             _buildStatItem(
                               value: '$bestStreak',
                               title: 'Лучшая серия',
-                              color: const Color(0xFFFFA726),
+                              color: AppColors.warning,
                               isSmallScreen: isSmallScreen,
                             ),
                           ],
@@ -728,9 +874,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     // Меню настроек
                     Card(
-                      color: const Color(0xFFFFFFFF),
+                      color: AppColors.surface,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(
+                          AppSpacing.responsive(context, AppSpacing.medium),
+                        ),
                       ),
                       elevation: 1,
                       child: Column(
@@ -740,7 +888,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             title: 'Мои книги',
                             isSmallScreen: isSmallScreen,
                             onTap: () {
-                              // TODO: Navigate to user's book collection
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MyBooksScreen(),
+                                ),
+                              );
                             },
                           ),
                           const Divider(height: 1, indent: 16, endIndent: 16),
@@ -749,22 +902,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             title: 'Фото цитат',
                             isSmallScreen: isSmallScreen,
                             onTap: () {
-                              // TODO: Navigate to quote photos screen
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => QuotesScreen(),
+                                ),
+                              );
                             },
                           ),
                           const Divider(height: 1, indent: 16, endIndent: 16),
                           ListTile(
                             leading: Icon(
                               Icons.notifications,
-                              color: const Color(0xFF8C6A4B),
-                              size: isSmallScreen ? 20 : 24,
+                              color: AppColors.primary,
+                              size: ResponsiveUtils.responsiveIconSize(
+                                context,
+                                isSmallScreen ? 20 : 24,
+                              ),
                             ),
                             title: Text(
                               'Уведомления',
                               style: GoogleFonts.manrope(
-                                fontSize: isSmallScreen ? 14 : 16,
+                                fontSize: ResponsiveUtils.responsiveFontSize(
+                                  context,
+                                  isSmallScreen ? 14 : 16,
+                                ),
                                 fontWeight: FontWeight.w500,
-                                color: const Color(0xFF2E2E2E),
+                                color: AppColors.onSurface,
                               ),
                             ),
                             trailing: Switch(
@@ -774,7 +938,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   _notificationsEnabled = value;
                                 });
                               },
-                              activeColor: const Color(0xFF8C6A4B),
+                              activeColor: AppColors.primary,
                             ),
                           ),
                           const Divider(height: 1, indent: 16, endIndent: 16),
@@ -783,7 +947,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             title: 'Помощь и поддержка',
                             isSmallScreen: isSmallScreen,
                             onTap: () {
-                              // TODO: Navigate to help screen
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => HelpSupportScreen(),
+                                ),
+                              );
                             },
                           ),
                           const Divider(height: 1, indent: 16, endIndent: 16),
@@ -792,7 +961,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             title: 'О приложении',
                             isSmallScreen: isSmallScreen,
                             onTap: () {
-                              // TODO: Navigate to about screen
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => AboutScreen(),
+                                ),
+                              );
                             },
                           ),
                         ],
@@ -813,22 +987,59 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           context.read<FavoritesProvider>().loadFavorites();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF8C6A4B),
+                          backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
-                          minimumSize: Size.fromHeight(isSmallScreen ? 44 : 50),
+                          minimumSize: Size.fromHeight(
+                            isSmallScreen
+                                ? ResponsiveUtils.getButtonHeight(
+                                    context,
+                                    size: 'small',
+                                  )
+                                : ResponsiveUtils.getButtonHeight(
+                                    context,
+                                    size: 'medium',
+                                  ),
+                          ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.responsive(context, AppSpacing.small),
+                            ),
                           ),
                           padding: EdgeInsets.symmetric(
-                            horizontal: isSmallScreen ? 12 : 16,
-                            vertical: isSmallScreen ? 10 : 12,
+                            horizontal: isSmallScreen
+                                ? AppSpacing.responsive(
+                                    context,
+                                    AppSpacing.small,
+                                  )
+                                : AppSpacing.responsive(
+                                    context,
+                                    AppSpacing.medium,
+                                  ),
+                            vertical: isSmallScreen
+                                ? AppSpacing.responsive(
+                                    context,
+                                    AppSpacing.small,
+                                  )
+                                : AppSpacing.responsive(
+                                    context,
+                                    AppSpacing.small,
+                                  ),
                           ),
                         ),
-                        icon: Icon(Icons.logout, size: isSmallScreen ? 18 : 20),
+                        icon: Icon(
+                          Icons.logout,
+                          size: ResponsiveUtils.responsiveIconSize(
+                            context,
+                            isSmallScreen ? 18 : 20,
+                          ),
+                        ),
                         label: Text(
                           'Выйти',
                           style: GoogleFonts.manrope(
-                            fontSize: isSmallScreen ? 14 : 16,
+                            fontSize: ResponsiveUtils.responsiveFontSize(
+                              context,
+                              isSmallScreen ? 14 : 16,
+                            ),
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -842,9 +1053,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Text(
                         'Дополнительные настройки',
                         style: GoogleFonts.manrope(
-                          fontSize: isSmallScreen ? 12 : 14,
+                          fontSize: ResponsiveUtils.responsiveFontSize(
+                            context,
+                            isSmallScreen ? 12 : 14,
+                          ),
                           fontWeight: FontWeight.w400,
-                          color: const Color(0xFF8C6A4B),
+                          color: AppColors.primary,
                         ),
                       ),
                     ),
@@ -867,21 +1081,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return ListTile(
       leading: Icon(
         icon,
-        color: const Color(0xFF8C6A4B),
-        size: isSmallScreen ? 20 : 24,
+        color: AppColors.primary,
+        size: ResponsiveUtils.responsiveIconSize(
+          context,
+          isSmallScreen ? 20 : 24,
+        ),
       ),
       title: Text(
         title,
         style: GoogleFonts.manrope(
-          fontSize: isSmallScreen ? 14 : 16,
+          fontSize: ResponsiveUtils.responsiveFontSize(
+            context,
+            isSmallScreen ? 14 : 16,
+          ),
           fontWeight: FontWeight.w500,
-          color: const Color(0xFF2E2E2E),
+          color: AppColors.onSurface,
         ),
       ),
       trailing: Icon(
         Icons.chevron_right,
-        color: const Color(0xFF8C6A4B),
-        size: isSmallScreen ? 18 : 20,
+        color: AppColors.primary,
+        size: ResponsiveUtils.responsiveIconSize(
+          context,
+          isSmallScreen ? 18 : 20,
+        ),
       ),
       onTap: onTap,
     );
@@ -895,24 +1118,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }) {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+        padding: EdgeInsets.symmetric(
+          horizontal: AppSpacing.responsive(context, AppSpacing.extraSmall),
+          vertical: AppSpacing.responsive(context, AppSpacing.small),
+        ),
         child: Column(
           children: [
             Text(
               value,
               style: GoogleFonts.manrope(
-                fontSize: isSmallScreen ? 20 : 24,
+                fontSize: ResponsiveUtils.responsiveFontSize(
+                  context,
+                  isSmallScreen ? 20 : 24,
+                ),
                 fontWeight: FontWeight.w700,
                 color: color,
               ),
             ),
-            SizedBox(height: isSmallScreen ? 4 : 6),
+            SizedBox(
+              height: isSmallScreen
+                  ? AppSpacing.responsive(context, AppSpacing.extraSmall)
+                  : AppSpacing.responsive(context, AppSpacing.small),
+            ),
             Text(
               title,
               style: GoogleFonts.manrope(
-                fontSize: isSmallScreen ? 10 : 12,
+                fontSize: ResponsiveUtils.responsiveFontSize(
+                  context,
+                  isSmallScreen ? 10 : 12,
+                ),
                 fontWeight: FontWeight.w500,
-                color: const Color(0xFF2E2E2E).withOpacity(0.7),
+                color: AppColors.onSurface.withOpacity(0.7),
               ),
               textAlign: TextAlign.center,
             ),
@@ -947,20 +1183,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Text(
           'Выход',
           style: GoogleFonts.manrope(
-            fontSize: MediaQuery.of(context).size.width < 350 ? 16 : 18,
+            fontSize: ResponsiveUtils.responsiveFontSize(
+              context,
+              MediaQuery.of(context).size.width < 350 ? 16 : 18,
+            ),
             fontWeight: FontWeight.w600,
           ),
         ),
         content: Text(
           'Вы уверены, что хотите выйти из аккаунта?',
           style: GoogleFonts.manrope(
-            fontSize: MediaQuery.of(context).size.width < 350 ? 14 : 16,
+            fontSize: ResponsiveUtils.responsiveFontSize(
+              context,
+              MediaQuery.of(context).size.width < 350 ? 14 : 16,
+            ),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('Отмена', style: GoogleFonts.manrope(fontSize: 14)),
+            child: Text(
+              'Отмена',
+              style: GoogleFonts.manrope(
+                fontSize: ResponsiveUtils.responsiveFontSize(context, 14),
+              ),
+            ),
           ),
           TextButton(
             onPressed: () async {
@@ -973,9 +1220,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Text(
               'Выйти',
               style: GoogleFonts.manrope(
-                fontSize: 14,
+                fontSize: ResponsiveUtils.responsiveFontSize(context, 14),
                 fontWeight: FontWeight.w600,
-                color: const Color(0xFF8C6A4B),
+                color: AppColors.primary,
               ),
             ),
           ),

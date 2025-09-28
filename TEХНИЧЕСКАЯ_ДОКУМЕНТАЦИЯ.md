@@ -165,6 +165,18 @@ CREATE TABLE subscription_plans (
   is_popular BOOLEAN DEFAULT FALSE,
   description TEXT
 );
+
+-- Таблица событий клубов
+CREATE TABLE events (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  club_id UUID NOT NULL REFERENCES clubs(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  date_time TIMESTAMP WITH TIME ZONE NOT NULL,
+  location TEXT,
+  event_type TEXT NOT NULL DEFAULT 'meeting',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 ```
 
 ### 6. Запуск приложения
@@ -195,13 +207,46 @@ lib/
 - ProductProvider: Каталог товаров
 - PromotionsProvider: Рекламные материалы
 - ClubsProvider: Книжные и кофейные клубы
+- EventsProvider: События клубов
 - UserProvider: Данные профиля пользователя
 - BookExchangeProvider: Функциональность обмена книгами
 - ReadingChallengesProvider: Читательские челленджи
-- AdminProvider: Административные функции
+
+### Новые функции
+
+#### Рекомендованные события в каталоге
+Добавлена новая функция, которая показывает события из клубов, в которых состоит пользователь, на экране категорий товаров. Эта функция:
+
+1. Загружает список всех клубов
+2. Проверяет, в каких клубах состоит текущий пользователь
+3. Получает события для этих клубов
+4. Отображает события в горизонтальном списке "Рекомендовано для вас"
+
+Файлы, связанные с этой функцией:
+- `lib/models/event.dart` - Модель события
+- `lib/providers/events_provider.dart` - Провайдер для управления событиями
+- `lib/screens/category_products_screen.dart` - Экран категорий с добавленной секцией событий
+- `lib/migrations/001_create_events_table.sql` - Миграция для создания таблицы событий
+
+Типы событий:
+- `workshop` - Мастер-классы и обучающие мероприятия
+- `meeting` - Встречи и обсуждения
+- `competition` - Конкурсы и соревнования
+- По умолчанию - Общие события
+
+## Структура данных
 
 ### Модели данных
-Приложение использует следующие модели данных:
+
+#### Event
+Модель события клуба:
+- `id` (String) - Уникальный идентификатор события
+- `clubId` (String) - Идентификатор клуба, организующего событие
+- `title` (String) - Название события
+- `description` (String) - Описание события
+- `dateTime` (DateTime) - Дата и время проведения события
+- `location` (String?) - Место проведения (опционально)
+- `eventType` (String) - Тип события (workshop, meeting, competition и т.д.)
 
 - Product: Представляет книги, кофе и десерты
 - User: Информация о профиле пользователя
@@ -282,7 +327,7 @@ lib/
 
 ### Модульное тестирование
 Модульные тесты должны охватывать:
-- Сериализацию/десериализацию моделей
+- Сериализация/десериализацию моделей
 - Логику провайдеров
 - Вспомогательные функции
 

@@ -130,17 +130,41 @@ class ResponsiveUtils {
 
   // АБСОЛЮТНО БЕЗОПАСНЫЕ ШРИФТЫ - НИКАКИХ переполнений!
   static double responsiveFontSize(BuildContext context, double baseSize) {
-    return baseSize; // Просто возвращаем базовый размер - НИКАКИХ переполнений!
+    final screenWidth = getScreenWidth(context);
+
+    // Use percentage-based scaling for better responsiveness
+    if (screenWidth < 360) {
+      return baseSize * 0.9; // Smaller screens get smaller text
+    } else if (screenWidth > 768) {
+      return baseSize * 1.1; // Larger screens get larger text
+    }
+    return baseSize; // Standard screens get base size
   }
 
   // АБСОЛЮТНО БЕЗОПАСНЫЕ ОТСТУПЫ - НИКАКИХ переполнений!
   static double responsivePadding(BuildContext context, double basePadding) {
-    return basePadding; // Просто возвращаем базовый размер
+    final screenWidth = getScreenWidth(context);
+
+    // Use percentage-based padding for better responsiveness
+    if (screenWidth < 360) {
+      return basePadding * 0.8; // Smaller screens get tighter padding
+    } else if (screenWidth > 768) {
+      return basePadding * 1.2; // Larger screens get looser padding
+    }
+    return basePadding; // Standard screens get base padding
   }
 
   // АБСОЛЮТНО БЕЗОПАСНЫЕ ИКОНКИ - НИКАКИХ переполнений!
   static double responsiveIconSize(BuildContext context, double baseSize) {
-    return baseSize; // Просто возвращаем базовый размер
+    final screenWidth = getScreenWidth(context);
+
+    // Use percentage-based icon sizing for better responsiveness
+    if (screenWidth < 360) {
+      return baseSize * 0.85; // Smaller screens get smaller icons
+    } else if (screenWidth > 768) {
+      return baseSize * 1.15; // Larger screens get larger icons
+    }
+    return baseSize; // Standard screens get base size
   }
 
   // Адаптивная ширина в процентах от ширины экрана
@@ -229,15 +253,23 @@ class ResponsiveUtils {
   }) {
     if (all != null) {
       return EdgeInsets.all(
-        all,
+        responsivePadding(context, all),
       ); // НИКАКОЙ адаптации - только фиксированные значения!
     }
 
     return EdgeInsets.only(
-      left: left ?? (horizontal ?? 0),
-      top: top ?? (vertical ?? 0),
-      right: right ?? (horizontal ?? 0),
-      bottom: bottom ?? (vertical ?? 0),
+      left: left != null
+          ? responsivePadding(context, left)
+          : (horizontal != null ? responsivePadding(context, horizontal) : 0),
+      top: top != null
+          ? responsivePadding(context, top)
+          : (vertical != null ? responsivePadding(context, vertical) : 0),
+      right: right != null
+          ? responsivePadding(context, right)
+          : (horizontal != null ? responsivePadding(context, horizontal) : 0),
+      bottom: bottom != null
+          ? responsivePadding(context, bottom)
+          : (vertical != null ? responsivePadding(context, vertical) : 0),
     );
   }
 
@@ -252,14 +284,24 @@ class ResponsiveUtils {
     double? bottom,
   }) {
     if (all != null) {
-      return EdgeInsets.all(all); // НИКАКОЙ адаптации!
+      return EdgeInsets.all(
+        responsivePadding(context, all),
+      ); // НИКАКОЙ адаптации!
     }
 
     return EdgeInsets.only(
-      left: left ?? (horizontal ?? 0),
-      top: top ?? (vertical ?? 0),
-      right: right ?? (horizontal ?? 0),
-      bottom: bottom ?? (vertical ?? 0),
+      left: left != null
+          ? responsivePadding(context, left)
+          : (horizontal != null ? responsivePadding(context, horizontal) : 0),
+      top: top != null
+          ? responsivePadding(context, top)
+          : (vertical != null ? responsivePadding(context, vertical) : 0),
+      right: right != null
+          ? responsivePadding(context, right)
+          : (horizontal != null ? responsivePadding(context, horizontal) : 0),
+      bottom: bottom != null
+          ? responsivePadding(context, bottom)
+          : (vertical != null ? responsivePadding(context, vertical) : 0),
     );
   }
 
@@ -268,7 +310,9 @@ class ResponsiveUtils {
     BuildContext context,
     double radius,
   ) {
-    return BorderRadius.circular(radius); // НИКАКОЙ адаптации!
+    return BorderRadius.circular(
+      responsivePadding(context, radius),
+    ); // НИКАКОЙ адаптации!
   }
 
   // ФИКСИРОВАННЫЕ ОГРАНИЧЕНИЯ - НИКАКИХ переполнений!
@@ -296,7 +340,7 @@ class ResponsiveUtils {
     required double extraLarge,
   }) {
     // Просто возвращаем medium для всех - НИКАКИХ переполнений!
-    return medium;
+    return responsiveFontSize(context, medium);
   }
 
   static double getPadding(
@@ -306,7 +350,7 @@ class ResponsiveUtils {
     required double large,
     required double extraLarge,
   }) {
-    return medium; // ФИКСИРОВАННО!
+    return responsivePadding(context, medium); // ФИКСИРОВАННО!
   }
 
   static EdgeInsets getMargin(
@@ -326,7 +370,7 @@ class ResponsiveUtils {
     required double large,
     required double extraLarge,
   }) {
-    return medium; // ФИКСИРОВАННО!
+    return responsiveIconSize(context, medium); // ФИКСИРОВАННО!
   }
 }
 
@@ -393,28 +437,33 @@ class AppUtils {
   }
 
   static IconData getIconForProductType(String type) {
-    switch (type.toLowerCase()) {
-      case 'книга':
-        return Icons.menu_book;
-      case 'кофе':
-        return Icons.coffee;
-      case 'десерт':
-        return Icons.cake;
-      default:
-        return Icons.shopping_bag;
+    final typeLower = type.toLowerCase();
+
+    if (typeLower.contains('книга')) {
+      return Icons.menu_book;
+    } else if (typeLower.contains('кофе')) {
+      return Icons.coffee;
+    } else if (typeLower.contains('десерт') ||
+        typeLower.contains('выпечка') ||
+        typeLower.contains('торт') ||
+        typeLower.contains('пирог')) {
+      return Icons.cake;
+    } else {
+      return Icons.shopping_bag;
     }
   }
 
   static Color getColorForProductType(String type) {
-    switch (type.toLowerCase()) {
-      case 'книга':
-        return const Color(0xFF8C6A4B);
-      case 'кофе':
-        return const Color(0xFF6D4C41);
-      case 'десерт':
-        return const Color(0xFFD7CCC8);
-      default:
-        return Colors.grey;
+    final typeLower = type.toLowerCase();
+
+    if (typeLower.contains('книга')) {
+      return const Color(0xFF8C6A4B);
+    } else if (typeLower.contains('кофе')) {
+      return const Color(0xFF6D4C41);
+    } else if (typeLower.contains('десерт') || typeLower.contains('выпечка')) {
+      return const Color(0xFFD7CCC8);
+    } else {
+      return Colors.grey;
     }
   }
 

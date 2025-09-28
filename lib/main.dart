@@ -13,6 +13,9 @@ import 'providers/user_provider.dart';
 import 'providers/book_exchange_provider.dart';
 import 'providers/reading_challenges_provider.dart';
 import 'providers/admin_provider.dart';
+import 'providers/events_provider.dart';
+import 'providers/books_provider.dart'; // Added BooksProvider import
+import 'providers/quotes_provider.dart';
 import 'screens/main_screen.dart';
 import 'screens/cart_screen.dart';
 import 'screens/news_feed_screen.dart';
@@ -20,11 +23,18 @@ import 'screens/auth_screen.dart';
 import 'screens/admin_screen.dart';
 import 'screens/book_exchange_screen.dart';
 import 'screens/quote_capture_screen.dart';
+import 'screens/quotes_screen.dart';
+import 'screens/help_support_screen.dart';
+import 'screens/about_screen.dart';
+import 'screens/club_detail_screen.dart';
+import 'screens/collection_detail_screen.dart';
 import 'screens/reading_challenges_screen.dart';
-import 'screens/admin_products_screen.dart'; // Add this import
-import 'screens/admin_promotions_screen.dart'; // Add this import
-import 'screens/admin_clubs_screen.dart'; // Add this import
-import 'screens/admin_users_screen.dart'; // Add this import
+import 'models/club.dart';
+import 'screens/admin_products_screen.dart';
+import 'screens/admin_promotions_screen.dart';
+import 'screens/admin_clubs_screen.dart';
+import 'screens/admin_users_screen.dart';
+import 'screens/category_products_screen.dart';
 import 'theme/app_theme.dart';
 
 void main() async {
@@ -57,6 +67,11 @@ class BookstoreApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => BookExchangeProvider()),
         ChangeNotifierProvider(create: (_) => ReadingChallengesProvider()),
         ChangeNotifierProvider(create: (_) => AdminProvider()),
+        ChangeNotifierProvider(create: (_) => EventsProvider()),
+        ChangeNotifierProvider(
+          create: (_) => BooksProvider(),
+        ), // Added BooksProvider
+        ChangeNotifierProvider(create: (_) => QuotesProvider()),
       ],
       child: MaterialApp(
         title: 'Уютный Книжный Магазин',
@@ -73,6 +88,9 @@ class BookstoreApp extends StatelessWidget {
           '/admin/users': (context) => AdminUsersScreen(),
           '/book_exchange': (context) => BookExchangeScreen(),
           '/quote_capture': (context) => QuoteCaptureScreen(),
+          '/quotes': (context) => QuotesScreen(),
+          '/help_support': (context) => HelpSupportScreen(),
+          '/about': (context) => AboutScreen(),
           '/reading_challenges': (context) => ReadingChallengesScreen(),
         },
         debugShowCheckedModeBanner: false,

@@ -182,6 +182,18 @@ CREATE TABLE subscription_plans (
   is_popular BOOLEAN DEFAULT FALSE,
   description TEXT
 );
+
+-- События клубов
+CREATE TABLE events (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  club_id UUID NOT NULL REFERENCES clubs(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  date_time TIMESTAMP WITH TIME ZONE NOT NULL,
+  location TEXT,
+  event_type TEXT NOT NULL DEFAULT 'meeting',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
 ```
 
 ## Запуск приложения
@@ -189,6 +201,18 @@ CREATE TABLE subscription_plans (
 ```bash
 flutter run
 ```
+
+## Миграции базы данных
+
+При добавлении новых функций могут потребоваться дополнительные таблицы или изменения в схеме базы данных. Миграции находятся в папке `lib/migrations` и должны выполняться в порядке нумерации.
+
+Для выполнения миграции:
+1. Откройте SQL Editor в Supabase Dashboard
+2. Скопируйте содержимое файла миграции
+3. Выполните SQL-запрос
+
+Текущие миграции:
+- `001_create_events_table.sql` - Создание таблицы событий клубов
 
 ## Архитектура
 

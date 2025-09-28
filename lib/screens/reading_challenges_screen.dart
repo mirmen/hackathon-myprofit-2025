@@ -44,7 +44,7 @@ class _ReadingChallengesScreenState extends State<ReadingChallengesScreen> {
         title: Text(
           'Читательские Челленджи',
           style: GoogleFonts.montserrat(
-            fontSize: 24,
+            fontSize: ResponsiveUtils.responsiveFontSize(context, 24),
             fontWeight: FontWeight.w700,
             color: AppColors.onSurface,
           ),
@@ -64,33 +64,42 @@ class _ReadingChallengesScreenState extends State<ReadingChallengesScreen> {
           return RefreshIndicator(
             onRefresh: () => provider.loadChallenges(),
             child: SingleChildScrollView(
-              padding: EdgeInsets.all(16),
+              padding: EdgeInsets.all(
+                AppSpacing.responsive(context, AppSpacing.medium),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Участвуйте в совместных челленджах и получайте бонусные баллы!',
                     style: GoogleFonts.montserrat(
-                      fontSize: 16,
+                      fontSize: ResponsiveUtils.responsiveFontSize(context, 16),
                       fontWeight: FontWeight.w400,
                       color: AppColors.textLight,
                     ),
                   ),
-                  SizedBox(height: 24),
+                  SizedBox(
+                    height: AppSpacing.responsive(context, AppSpacing.large),
+                  ),
                   Text(
                     'Популярные челленджи',
                     style: GoogleFonts.montserrat(
-                      fontSize: 20,
+                      fontSize: ResponsiveUtils.responsiveFontSize(context, 20),
                       fontWeight: FontWeight.w700,
                     ),
                   ),
-                  SizedBox(height: 16),
+                  SizedBox(
+                    height: AppSpacing.responsive(context, AppSpacing.medium),
+                  ),
                   if (provider.challenges.isEmpty)
                     Center(
                       child: Text(
                         'Нет доступных челленджей',
                         style: GoogleFonts.montserrat(
-                          fontSize: 16,
+                          fontSize: ResponsiveUtils.responsiveFontSize(
+                            context,
+                            16,
+                          ),
                           color: AppColors.textLight,
                         ),
                       ),
@@ -99,29 +108,49 @@ class _ReadingChallengesScreenState extends State<ReadingChallengesScreen> {
                     ...provider.challenges
                         .map((challenge) => _buildChallengeCard(challenge))
                         .toList(),
-                  SizedBox(height: 24),
+                  SizedBox(
+                    height: AppSpacing.responsive(context, AppSpacing.large),
+                  ),
                   Card(
                     child: Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: EdgeInsets.all(
+                        AppSpacing.responsive(context, AppSpacing.medium),
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Создать свой челлендж',
                             style: GoogleFonts.montserrat(
-                              fontSize: 18,
+                              fontSize: ResponsiveUtils.responsiveFontSize(
+                                context,
+                                18,
+                              ),
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          SizedBox(height: 12),
+                          SizedBox(
+                            height: AppSpacing.responsive(
+                              context,
+                              AppSpacing.small,
+                            ),
+                          ),
                           Text(
                             'Предложите свою идею для книжного челленджа сообществу',
                             style: GoogleFonts.montserrat(
-                              fontSize: 14,
+                              fontSize: ResponsiveUtils.responsiveFontSize(
+                                context,
+                                14,
+                              ),
                               color: AppColors.textLight,
                             ),
                           ),
-                          SizedBox(height: 16),
+                          SizedBox(
+                            height: AppSpacing.responsive(
+                              context,
+                              AppSpacing.medium,
+                            ),
+                          ),
                           ElevatedButton(
                             onPressed: _showCreateChallengeDialog,
                             child: Text('Предложить челлендж'),
@@ -148,10 +177,14 @@ class _ReadingChallengesScreenState extends State<ReadingChallengesScreen> {
     final percentage = challenge.getProgressPercentage(userId);
 
     return Container(
-      margin: EdgeInsets.only(bottom: 16),
+      margin: EdgeInsets.only(
+        bottom: AppSpacing.responsive(context, AppSpacing.medium),
+      ),
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(
+          AppSpacing.responsive(context, AppSpacing.small),
+        ),
         border: Border.all(color: AppColors.divider, width: 1),
       ),
       child: Column(
@@ -159,23 +192,29 @@ class _ReadingChallengesScreenState extends State<ReadingChallengesScreen> {
         children: [
           // Header
           Container(
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.all(
+              AppSpacing.responsive(context, AppSpacing.medium),
+            ),
             child: Row(
               children: [
                 Container(
-                  width: 50,
-                  height: 50,
+                  width: ResponsiveUtils.responsiveSize(context, 50),
+                  height: ResponsiveUtils.responsiveSize(context, 50),
                   decoration: BoxDecoration(
                     color: AppColors.primary.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(
+                      AppSpacing.responsive(context, AppSpacing.small),
+                    ),
                   ),
                   child: Icon(
                     Icons.emoji_events,
                     color: AppColors.primary,
-                    size: 24,
+                    size: ResponsiveUtils.responsiveIconSize(context, 24),
                   ),
                 ),
-                SizedBox(width: 16),
+                SizedBox(
+                  width: AppSpacing.responsive(context, AppSpacing.medium),
+                ),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,15 +222,26 @@ class _ReadingChallengesScreenState extends State<ReadingChallengesScreen> {
                       Text(
                         challenge.title,
                         style: GoogleFonts.montserrat(
-                          fontSize: 16,
+                          fontSize: ResponsiveUtils.responsiveFontSize(
+                            context,
+                            16,
+                          ),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(height: 4),
+                      SizedBox(
+                        height: AppSpacing.responsive(
+                          context,
+                          AppSpacing.extraSmall,
+                        ),
+                      ),
                       Text(
                         challenge.description,
                         style: GoogleFonts.montserrat(
-                          fontSize: 13,
+                          fontSize: ResponsiveUtils.responsiveFontSize(
+                            context,
+                            13,
+                          ),
                           color: AppColors.textLight,
                         ),
                       ),
@@ -203,11 +253,15 @@ class _ReadingChallengesScreenState extends State<ReadingChallengesScreen> {
           ),
           // Progress
           Container(
-            height: 8,
-            margin: EdgeInsets.symmetric(horizontal: 16),
+            height: ResponsiveUtils.responsiveSize(context, 8),
+            margin: EdgeInsets.symmetric(
+              horizontal: AppSpacing.responsive(context, AppSpacing.medium),
+            ),
             decoration: BoxDecoration(
               color: Colors.grey[200],
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(
+                AppSpacing.responsive(context, AppSpacing.extraSmall),
+              ),
             ),
             child: FractionallySizedBox(
               alignment: Alignment.centerLeft,
@@ -215,13 +269,17 @@ class _ReadingChallengesScreenState extends State<ReadingChallengesScreen> {
               child: Container(
                 decoration: BoxDecoration(
                   color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.circular(
+                    AppSpacing.responsive(context, AppSpacing.extraSmall),
+                  ),
                 ),
               ),
             ),
           ),
           Container(
-            padding: EdgeInsets.all(16),
+            padding: EdgeInsets.all(
+              AppSpacing.responsive(context, AppSpacing.medium),
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -231,23 +289,39 @@ class _ReadingChallengesScreenState extends State<ReadingChallengesScreen> {
                     Text(
                       '$progress/$total книг',
                       style: GoogleFonts.montserrat(
-                        fontSize: 14,
+                        fontSize: ResponsiveUtils.responsiveFontSize(
+                          context,
+                          14,
+                        ),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    SizedBox(
+                      height: AppSpacing.responsive(
+                        context,
+                        AppSpacing.extraSmall,
+                      ),
+                    ),
                     Row(
                       children: [
                         Icon(
                           Icons.people,
-                          size: 14,
+                          size: ResponsiveUtils.responsiveIconSize(context, 14),
                           color: AppColors.textLight,
                         ),
-                        SizedBox(width: 4),
+                        SizedBox(
+                          width: AppSpacing.responsive(
+                            context,
+                            AppSpacing.extraSmall,
+                          ),
+                        ),
                         Text(
                           '${challenge.participants.length} участников',
                           style: GoogleFonts.montserrat(
-                            fontSize: 12,
+                            fontSize: ResponsiveUtils.responsiveFontSize(
+                              context,
+                              12,
+                            ),
                             color: AppColors.textLight,
                           ),
                         ),
@@ -257,24 +331,43 @@ class _ReadingChallengesScreenState extends State<ReadingChallengesScreen> {
                 ),
                 Row(
                   children: [
-                    Icon(Icons.stars, size: 16, color: Colors.amber),
-                    SizedBox(width: 4),
+                    Icon(
+                      Icons.stars,
+                      size: ResponsiveUtils.responsiveIconSize(context, 16),
+                      color: Colors.amber,
+                    ),
+                    SizedBox(
+                      width: AppSpacing.responsive(
+                        context,
+                        AppSpacing.extraSmall,
+                      ),
+                    ),
                     Text(
                       '+${challenge.bonusPoints}',
                       style: GoogleFonts.montserrat(
-                        fontSize: 14,
+                        fontSize: ResponsiveUtils.responsiveFontSize(
+                          context,
+                          14,
+                        ),
                         fontWeight: FontWeight.w700,
                         color: Colors.amber,
                       ),
                     ),
-                    SizedBox(width: 12),
+                    SizedBox(
+                      width: AppSpacing.responsive(context, AppSpacing.small),
+                    ),
                     ElevatedButton(
                       onPressed: () => _joinChallenge(challenge),
                       child: Text(
                         challenge.isUserParticipating(userId)
                             ? (progress > 0 ? 'Продолжить' : 'Участвую')
                             : 'Присоединиться',
-                        style: TextStyle(fontSize: 12),
+                        style: TextStyle(
+                          fontSize: ResponsiveUtils.responsiveFontSize(
+                            context,
+                            12,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -297,9 +390,9 @@ class _ReadingChallengesScreenState extends State<ReadingChallengesScreen> {
         return Padding(
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
-            left: 16,
-            right: 16,
-            top: 16,
+            left: AppSpacing.responsive(context, AppSpacing.medium),
+            right: AppSpacing.responsive(context, AppSpacing.medium),
+            top: AppSpacing.responsive(context, AppSpacing.medium),
           ),
           child: Form(
             key: _formKey,
@@ -310,11 +403,13 @@ class _ReadingChallengesScreenState extends State<ReadingChallengesScreen> {
                 Text(
                   'Создать челлендж',
                   style: GoogleFonts.montserrat(
-                    fontSize: 20,
+                    fontSize: ResponsiveUtils.responsiveFontSize(context, 20),
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 16),
+                SizedBox(
+                  height: AppSpacing.responsive(context, AppSpacing.medium),
+                ),
                 TextFormField(
                   controller: _titleController,
                   decoration: InputDecoration(
@@ -328,7 +423,9 @@ class _ReadingChallengesScreenState extends State<ReadingChallengesScreen> {
                     return null;
                   },
                 ),
-                SizedBox(height: 12),
+                SizedBox(
+                  height: AppSpacing.responsive(context, AppSpacing.small),
+                ),
                 TextFormField(
                   controller: _descriptionController,
                   maxLines: 2,
@@ -344,7 +441,9 @@ class _ReadingChallengesScreenState extends State<ReadingChallengesScreen> {
                     return null;
                   },
                 ),
-                SizedBox(height: 12),
+                SizedBox(
+                  height: AppSpacing.responsive(context, AppSpacing.small),
+                ),
                 Row(
                   children: [
                     Expanded(
@@ -367,7 +466,9 @@ class _ReadingChallengesScreenState extends State<ReadingChallengesScreen> {
                         },
                       ),
                     ),
-                    SizedBox(width: 12),
+                    SizedBox(
+                      width: AppSpacing.responsive(context, AppSpacing.small),
+                    ),
                     Expanded(
                       child: TextFormField(
                         controller: _bonusPointsController,
@@ -390,7 +491,9 @@ class _ReadingChallengesScreenState extends State<ReadingChallengesScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 20),
+                SizedBox(
+                  height: AppSpacing.responsive(context, AppSpacing.large),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
@@ -398,7 +501,9 @@ class _ReadingChallengesScreenState extends State<ReadingChallengesScreen> {
                       onPressed: () => Navigator.pop(context),
                       child: Text('Отмена'),
                     ),
-                    SizedBox(width: 8),
+                    SizedBox(
+                      width: AppSpacing.responsive(context, AppSpacing.small),
+                    ),
                     ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
@@ -410,7 +515,9 @@ class _ReadingChallengesScreenState extends State<ReadingChallengesScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 16),
+                SizedBox(
+                  height: AppSpacing.responsive(context, AppSpacing.medium),
+                ),
               ],
             ),
           ),

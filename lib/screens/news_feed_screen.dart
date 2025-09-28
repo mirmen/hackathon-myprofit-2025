@@ -37,7 +37,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
 
           return Column(
             children: [
-              // Categories
+              // Categories - Improved buttons
               Container(
                 height: 50,
                 child: ListView.builder(
@@ -57,11 +57,31 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
                         context,
                         right: 8,
                       ),
-                      child: FilterChip(
-                        label: Text(category),
+                      child: ChoiceChip(
+                        label: Text(
+                          category,
+                          style: GoogleFonts.manrope(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
                         selected: isSelected,
                         onSelected: (_) =>
                             promotionsProvider.setCategory(category),
+                        selectedColor: Color(0xFF8C6A4B),
+                        backgroundColor: Colors.grey[200]!,
+                        labelStyle: TextStyle(
+                          color: isSelected ? Colors.white : Colors.grey[700]!,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          side: BorderSide(
+                            color: isSelected
+                                ? Color(0xFF8C6A4B)
+                                : Colors.grey[300]!,
+                            width: 1,
+                          ),
+                        ),
                       ),
                     );
                   },
@@ -146,7 +166,7 @@ class PromotionCard extends StatelessWidget {
                       AppUtils.timeAgo(promotion.createdAt),
                       style: GoogleFonts.manrope(
                         fontSize: 12,
-                        color: Colors.grey[600],
+                        color: Colors.grey[600]!,
                       ),
                     ),
                   ],
@@ -174,7 +194,7 @@ class PromotionCard extends StatelessWidget {
                     promotion.description!,
                     style: GoogleFonts.manrope(
                       fontSize: 14,
-                      color: Colors.grey[700],
+                      color: Colors.grey[700]!,
                     ),
                   ),
                 ],
