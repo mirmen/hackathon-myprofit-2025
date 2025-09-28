@@ -36,6 +36,7 @@ import 'screens/admin_clubs_screen.dart';
 import 'screens/admin_users_screen.dart';
 import 'screens/category_products_screen.dart';
 import 'screens/podborka_screen.dart';
+import 'screens/order_screen.dart';
 import 'theme/app_theme.dart';
 
 void main() async {
@@ -96,6 +97,7 @@ class BookstoreApp extends StatelessWidget {
           '/reading_challenges': (context) => ReadingChallengesScreen(),
           '/subscriptions': (context) => SubscriptionScreen(),
           '/collections': (context) => BookCollectionsScreen(),
+          '/orders': (context) => OrdersScreen(),
         },
         debugShowCheckedModeBanner: false,
       ),

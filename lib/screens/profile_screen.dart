@@ -936,6 +936,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             },
                           ),
                           const Divider(height: 1, indent: 16, endIndent: 16),
+                          // Добавляем кнопку для книгообмена
+                          _buildAdaptiveListTile(
+                            icon: Icons.swap_horiz,
+                            title: 'Книгообмен',
+                            isSmallScreen: isSmallScreen,
+                            onTap: () {
+                              Navigator.pushNamed(context, '/book_exchange');
+                            },
+                          ),
+                          const Divider(height: 1, indent: 16, endIndent: 16),
+                          // Добавляем кнопку для заказов
+                          _buildAdaptiveListTile(
+                            icon: Icons.shopping_bag,
+                            title: 'Мои заказы',
+                            isSmallScreen: isSmallScreen,
+                            onTap: () {
+                              Navigator.pushNamed(context, '/orders');
+                            },
+                          ),
+                          const Divider(height: 1, indent: 16, endIndent: 16),
                           ListTile(
                             leading: Icon(
                               Icons.notifications,
