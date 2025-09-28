@@ -29,12 +29,13 @@ import 'screens/about_screen.dart';
 import 'screens/club_detail_screen.dart';
 import 'screens/collection_detail_screen.dart';
 import 'screens/reading_challenges_screen.dart';
-import 'models/club.dart';
+import 'screens/subscription_screen.dart';
 import 'screens/admin_products_screen.dart';
 import 'screens/admin_promotions_screen.dart';
 import 'screens/admin_clubs_screen.dart';
 import 'screens/admin_users_screen.dart';
 import 'screens/category_products_screen.dart';
+import 'screens/podborka_screen.dart';
 import 'theme/app_theme.dart';
 
 void main() async {
@@ -72,6 +73,7 @@ class BookstoreApp extends StatelessWidget {
           create: (_) => BooksProvider(),
         ), // Added BooksProvider
         ChangeNotifierProvider(create: (_) => QuotesProvider()),
+        ChangeNotifierProvider(create: (_) => BookCollectionsProvider()),
       ],
       child: MaterialApp(
         title: 'Уютный Книжный Магазин',
@@ -92,6 +94,8 @@ class BookstoreApp extends StatelessWidget {
           '/help_support': (context) => HelpSupportScreen(),
           '/about': (context) => AboutScreen(),
           '/reading_challenges': (context) => ReadingChallengesScreen(),
+          '/subscriptions': (context) => SubscriptionScreen(),
+          '/collections': (context) => BookCollectionsScreen(),
         },
         debugShowCheckedModeBanner: false,
       ),

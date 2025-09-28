@@ -2,6 +2,7 @@ import 'package:coffeebook/screens/my_books_screen.dart';
 import 'package:coffeebook/screens/quotes_screen.dart';
 import 'package:coffeebook/screens/help_support_screen.dart';
 import 'package:coffeebook/screens/about_screen.dart';
+import 'package:coffeebook/screens/subscription_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -908,6 +909,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   builder: (context) => QuotesScreen(),
                                 ),
                               );
+                            },
+                          ),
+                          const Divider(height: 1, indent: 16, endIndent: 16),
+                          _buildAdaptiveListTile(
+                            icon: Icons.local_cafe,
+                            title: 'Абонементы на кофе',
+                            isSmallScreen: isSmallScreen,
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SubscriptionScreen(),
+                                ),
+                              );
+                            },
+                          ),
+                          const Divider(height: 1, indent: 16, endIndent: 16),
+                          // Добавляем кнопку для подборок книг
+                          _buildAdaptiveListTile(
+                            icon: Icons.collections_bookmark,
+                            title: 'Подборки книг',
+                            isSmallScreen: isSmallScreen,
+                            onTap: () {
+                              Navigator.pushNamed(context, '/collections');
                             },
                           ),
                           const Divider(height: 1, indent: 16, endIndent: 16),
